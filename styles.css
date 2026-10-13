@@ -51,6 +51,7 @@ html:not(.review) [data-pending], html:not(.review) .tbd, html:not(.review) .rev
   background: var(--marfil); border: 1px dashed color-mix(in srgb, var(--castano) 60%, transparent); border-radius: 6px; padding: .3rem .6rem; text-align: left; }
 .review-bar { position: sticky; top: 0; z-index: 30; margin: 0; padding: .5rem var(--gutter); background: var(--castano); color: var(--marfil);
   font: 500 .8125rem/1.35 var(--sans); text-align: center; }
+@media (max-width: 767px) { .review-bar { position: static; } } /* en celular son 3 líneas: fija taparía el 10 % de la pantalla */
 
 /* Sin JavaScript no hay cuenta regresiva, confirmados ni mensajes que cargar: se ocultan en vez de mostrar guiones */
 html:not(.js) :is(.countdown, .attendance, .wall) { display: none; }
@@ -78,10 +79,13 @@ html:not(.js) :is(.countdown, .attendance, .wall) { display: none; }
   border-inline: var(--hair); font-variant-numeric: lining-nums; }
 
 /* ---------- Portada: foto 132 a sangre, sin velo; tinta sobre el cielo claro (≥ 6,3:1 medido sobre el original) ---------- */
-.hero { position: relative; min-height: calc(100svh - 8.5rem); overflow: hidden; isolation: isolate; color: var(--tinta); background: #D8DAD6; }
+/* Celular: la foto 132m (720×1263) a todo el ancho mide 175vw y su copa más alta está a 50vw del borde superior. El alto
+   de la pantalla real (Safari con barras: 393×659) no alcanza para cielo + texto + pareja, así que el hero nunca baja de
+   164vw y la foto se ancla arriba: el recorte cae en el pasto, nunca en el cielo donde va el texto. */
+.hero { position: relative; min-height: max(calc(100svh - 8.5rem), round(164vw, 1px)); overflow: hidden; isolation: isolate; color: var(--tinta); background: #D8DAD6; }
 .hero__media, .hero__media img { position: absolute; inset: 0; width: 100%; height: 100%; }
 .hero__media { z-index: -1; }
-.hero__media img { object-fit: cover; object-position: 50% 100%; color: transparent; } /* si la foto no carga, el alt no se pisa con los nombres */
+.hero__media img { object-fit: cover; object-position: 50% 0; color: transparent; } /* si la foto no carga, el alt no se pisa con los nombres */
 .hero__text { display: grid; justify-items: center; gap: .55rem; text-align: center; padding: calc(env(safe-area-inset-top) + 1.1rem) var(--gutter) 0; }
 .hero__names { display: grid; justify-items: center; font-size: clamp(2.75rem, 12.5vw, 8rem); line-height: .9; }
 /* La "y" un poco más grande y con aire propio: a 360 px se leía como una mancha entre los nombres */
@@ -373,7 +377,7 @@ body:has(.lightbox[open]) .fab { visibility: hidden; }
   .hero__text { grid-auto-flow: column; justify-content: center; align-items: center; column-gap: 1.75rem; padding-top: .9rem; }
   .hero__names { display: block; font-size: 2.6rem; }
   .hero__names .script { margin: 0 .08em; }
-  .datelock--sky { width: auto; }
+  .datelock--sky { width: auto; column-gap: .9rem; } /* sin ancho fijo, las columnas 1fr se ajustan al texto: sin gap, «ABRIL 2027» tocaba el filete */
   .datelock--sky time { font-size: 1.9rem; }
 }
 
