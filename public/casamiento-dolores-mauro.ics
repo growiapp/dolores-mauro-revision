@@ -1,0 +1,22 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//FA Studio//Dolores y Mauro//ES
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:20270403-iglesia@dolores-y-mauro
+DTSTAMP:20261012T120000Z
+DTSTART:20270403T140000Z
+SUMMARY:Casamiento de Dolores y Mauro · Ceremonia religiosa
+LOCATION:Iglesia de Purmamarca\, Purmamarca\, Jujuy
+DESCRIPTION:Ceremonia religiosa\, 11:00 (hora de Argentina).
+END:VEVENT
+BEGIN:VEVENT
+UID:20270403-civil@dolores-y-mauro
+DTSTAMP:20261012T120000Z
+DTSTART:20270403T160000Z
+SUMMARY:Casamiento de Dolores y Mauro · Ceremonia civil
+LOCATION:Finca Los Churquis\, Volcán\, Jujuy
+DESCRIPTION:Ceremonia civil\, 13:00 (hora de Argentina).
+END:VEVENT
+END:VCALENDAR
