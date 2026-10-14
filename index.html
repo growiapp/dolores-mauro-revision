@@ -19,22 +19,24 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="theme-color" content="#F5F0E8">
   <link rel="icon" href="data:,">
-  <link rel="preload" as="image" href="public/img/132m-720.webp" imagesrcset="public/img/132m-720.webp 720w, public/img/132m-1140.webp 1140w" imagesizes="100vw" media="(max-width: 767px) and (orientation: portrait)" fetchpriority="high">
-  <link rel="preload" as="image" href="public/img/132-2000.webp" imagesrcset="public/img/132-1280.webp 1280w, public/img/132-2000.webp 2000w, public/img/132-3000.webp 3000w" imagesizes="100vw" media="(min-width: 768px), (orientation: landscape)" fetchpriority="high">
+  <link rel="preload" as="image" href="public/img/132-1280.webp" imagesrcset="public/img/132-1280.webp 1280w, public/img/132-2000.webp 2000w, public/img/132-3000.webp 3000w" imagesizes="(max-width: 767px) and (orientation: portrait) 200vw, 100vw" fetchpriority="high">
   <link rel="preload" href="public/fonts/fraunces-latin-full-normal.woff2" as="font" type="font/woff2" crossorigin>
   <!-- Modo revisión (?revision): muestra módulos pendientes y datos ficticios marcados. La vista pública no los muestra. -->
   <script>if (new URLSearchParams(location.search).has("revision")) document.documentElement.classList.add("review");</script>
-  <link rel="stylesheet" href="styles.css?v=20261013f">
+  <link rel="stylesheet" href="styles.css?v=20261014a">
 </head>
 <body>
   <a class="skip" href="#el-dia">Ir a horarios y lugares</a>
   <p class="review-bar" data-pending>Vista de revisión · los recuadros punteados marcan lo que falta completar; los nombres y mensajes son de ejemplo y los formularios no envían nada.</p>
+  <!-- Alto de la barra de revisión (0 en la vista pública): el hero móvil lo descuenta para que la banda entre en la pantalla -->
+  <script>{ const bar = document.currentScript.previousElementSibling, set = () => document.documentElement.style.setProperty("--review-h", bar.offsetHeight + "px");
+    set(); addEventListener("resize", set); document.fonts.ready.then(set); }</script>
 
   <header class="hero" aria-label="Portada">
     <picture class="hero__media">
-      <source media="(min-width: 768px), (orientation: landscape)" srcset="public/img/132-1280.webp 1280w, public/img/132-2000.webp 2000w, public/img/132-3000.webp 3000w" sizes="100vw">
-      <img src="public/img/132m-720.webp" srcset="public/img/132m-720.webp 720w, public/img/132m-1140.webp 1140w" sizes="100vw"
-           width="720" height="1263" fetchpriority="high"
+      <!-- Una sola foto 3:2 en todos los tamaños: en celular vertical se ajusta al alto y muestra cielo, pareja y pasto enteros -->
+      <img src="public/img/132-1280.webp" srcset="public/img/132-1280.webp 1280w, public/img/132-2000.webp 2000w, public/img/132-3000.webp 3000w"
+           sizes="(max-width: 767px) and (orientation: portrait) 200vw, 100vw" width="1280" height="853" fetchpriority="high"
            alt="Dolores y Mauro caminan de espaldas, de la mano, con el caballo, por un campo abierto hacia el monte">
     </picture>
     <div class="hero__text">
@@ -206,7 +208,7 @@
 
       <form id="rsvp-form" class="form" novalidate aria-labelledby="rsvp-title">
         <fieldset class="form__body" disabled>
-          <p class="demo-note" hidden><strong>Demostración.</strong> Este formulario todavía no guarda ni envía respuestas a Dolores y Mauro.</p>
+          <p class="demo-note" hidden><strong>Demostración.</strong> Este formulario todavía no guarda ni envía respuestas.</p>
           <noscript><p class="note">Para confirmar necesitás tener JavaScript activado.</p></noscript>
 
           <div class="field" data-field="name">

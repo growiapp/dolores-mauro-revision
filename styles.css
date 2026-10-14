@@ -79,17 +79,17 @@ html:not(.js) :is(.countdown, .attendance, .wall) { display: none; }
   border-inline: var(--hair); font-variant-numeric: lining-nums; }
 
 /* ---------- Portada: foto 132 a sangre, sin velo; tinta sobre el cielo claro (≥ 6,3:1 medido sobre el original) ---------- */
-/* Celular: la foto 132m (720×1263) a todo el ancho mide 175vw y su copa más alta está a 50vw del borde superior. El alto
-   de la pantalla real (Safari con barras: 393×659) no alcanza para cielo + texto + pareja, así que el hero nunca baja de
-   164vw y la foto se ancla arriba: el recorte cae en el pasto, nunca en el cielo donde va el texto. */
-.hero { position: relative; min-height: max(calc(100svh - 8.5rem), round(164vw, 1px)); overflow: hidden; isolation: isolate; color: var(--tinta); background: #D8DAD6; }
+/* Celular vertical: hero + banda = alto real de la pantalla (svh: Safari con barras visibles). La banda mide 8,3rem;
+   con ?revision también se descuenta la barra de revisión (--review-h, la mide main.js). La foto 3:2 se ajusta al alto
+   y muestra entero cielo, monte, pareja y pasto: la copa más alta queda al 28,7 % del alto y los pies al 89 %. */
+.hero { position: relative; min-height: calc(100svh - 8.5rem - var(--review-h, 0px)); overflow: hidden; isolation: isolate; color: var(--tinta); background: #D8DAD6; }
 .hero__media, .hero__media img { position: absolute; inset: 0; width: 100%; height: 100%; }
 .hero__media { z-index: -1; }
-.hero__media img { object-fit: cover; object-position: 50% 0; color: transparent; } /* si la foto no carga, el alt no se pisa con los nombres */
+.hero__media img { object-fit: cover; object-position: 42% 50%; color: transparent; } /* si la foto no carga, el alt no se pisa con los nombres */
 .hero__text { display: grid; justify-items: center; gap: .55rem; text-align: center; padding: calc(env(safe-area-inset-top) + 1.1rem) var(--gutter) 0; }
-.hero__names { display: grid; justify-items: center; font-size: clamp(2.75rem, 12.5vw, 8rem); line-height: .9; }
-/* La "y" un poco más grande y con aire propio: a 360 px se leía como una mancha entre los nombres */
-.hero__names .script { font-size: .7em; color: var(--castano); line-height: .8; margin: .02em 0 .08em; }
+/* En una línea, como en tablet y escritorio: apilado ocupaba 120 px de cielo y el título chocaba con el monte */
+.hero__names { font-size: 11.5vw; line-height: .9; }
+.hero__names .script { font-size: .7em; color: var(--castano); line-height: .8; margin: 0 .08em; }
 .datelock--sky { width: min(100%, 20rem); }
 .datelock--sky time { font-size: 2.25rem; border-color: rgb(70 61 53 / .35); }
 /* Pantallas angostas: el follaje sube; el bloque se compacta para dejar aire sobre las copas (medido a 320–360 px) */
@@ -98,7 +98,6 @@ html:not(.js) :is(.countdown, .attendance, .wall) { display: none; }
   .datelock--sky time { font-size: 2rem; padding-inline: .9rem; }
 }
 @media (max-width: 340px) {
-  .hero__names { font-size: 11vw; }
   .datelock--sky time { font-size: 1.75rem; }
 }
 
@@ -288,8 +287,7 @@ body:has(.lightbox[open]) .fab { visibility: hidden; }
   .hero { min-height: calc(100svh - 5rem); }
   .hero__media img { object-position: 50% 30%; }
   .hero__text { padding-top: 6vh; gap: 1rem; }
-  .hero__names { display: block; font-size: clamp(4.5rem, 8vw, 8rem); }
-  .hero__names .script { margin: 0 .08em; }
+  .hero__names { font-size: clamp(4.5rem, 8vw, 8rem); }
   .datelock--sky time { font-size: 3rem; }
 
   .band { grid-template-columns: 1fr auto; align-items: center; column-gap: 2rem; padding-block: 1rem; padding-inline: var(--wide); }
