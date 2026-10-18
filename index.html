@@ -21,13 +21,14 @@
   <link rel="icon" href="data:,">
   <link rel="preload" as="image" href="public/img/132-1280.webp" imagesrcset="public/img/132-1280.webp 1280w, public/img/132-2000.webp 2000w, public/img/132-3000.webp 3000w" imagesizes="(max-width: 767px) and (orientation: portrait) 200vw, 100vw" fetchpriority="high">
   <link rel="preload" href="public/fonts/fraunces-latin-full-normal.woff2" as="font" type="font/woff2" crossorigin>
-  <!-- Modo revisión (?revision): muestra módulos pendientes y datos ficticios marcados. La vista pública no los muestra. -->
+  <!-- Modo revisión (?revision): vista para la pareja, con una aclaración general y datos de ejemplo. La vista pública no los muestra.
+       Los datos pendientes están en deliverables/revision-fa-studio/pendientes.md -->
   <script>if (new URLSearchParams(location.search).has("revision")) document.documentElement.classList.add("review");</script>
-  <link rel="stylesheet" href="styles.css?v=20261018b">
+  <link rel="stylesheet" href="styles.css?v=20261019a">
 </head>
 <body>
   <a class="skip" href="#el-dia">Ir a horarios y lugares</a>
-  <p class="review-bar" data-pending>Vista de revisión · los recuadros punteados marcan lo que falta completar; los nombres y mensajes son de ejemplo y los formularios no envían nada.</p>
+  <p class="review-bar" data-pending>Esta es una primera vista previa de su invitación. Algunos contenidos se completarán más adelante. Los formularios son de muestra y no registran respuestas.</p>
   <!-- Alto de la barra de revisión (0 en la vista pública): el hero móvil lo descuenta para que la banda entre en la pantalla -->
   <script>{ const bar = document.currentScript.previousElementSibling, set = () => document.documentElement.style.setProperty("--review-h", bar.offsetHeight + "px");
     set(); addEventListener("resize", set); document.fonts.ready.then(set); }</script>
@@ -64,7 +65,6 @@
   <main>
     <section class="invite" aria-label="Invitación">
       <p class="invite__line">Te invitamos a celebrar nuestro casamiento</p>
-      <p class="tbd">Frase provisional: la redacción final la eligen Dolores y Mauro</p>
     </section>
 
     <!-- Historia: solo texto, sin fotos (para eso está la galería). Oculta en la vista pública hasta tener el texto:
@@ -73,7 +73,7 @@
       <h2 id="portrait-title" class="caps-title">Dolores <span class="script">y</span> Mauro</h2>
 
       <div class="portrait__words" data-pending>
-        <p class="tbd tbd--block">Espacio para su historia, en sus palabras (3–5 líneas). Pendiente: no la inventamos.</p>
+        <p class="tbd tbd--block">Acá va su historia, contada con sus palabras.</p>
       </div>
     </section>
 
@@ -89,7 +89,6 @@
           <p class="town__name">Purmamarca</p>
           <h3>Ceremonia religiosa</h3>
           <p>Iglesia de Purmamarca</p>
-          <p class="tbd" data-pending>Pendiente: link exacto de Google Maps. Sin pin verificado no se muestra el botón.</p>
         </li>
         <li class="route" aria-hidden="true"><span></span></li>
         <li class="town">
@@ -97,11 +96,10 @@
           <p class="town__name">Volcán</p>
           <h3>Ceremonia civil</h3>
           <p>Finca Los Churquis</p>
-          <p class="tbd" data-pending>Pendiente: link exacto de Google Maps y acceso a la finca.</p>
         </li>
       </ol>
 
-      <div class="day__more" data-pending>
+      <div class="day__more" data-pending data-later>
         <p><strong>Celebración</strong> <span class="tbd">Pendiente: horario y lugar</span></p>
       </div>
 
@@ -112,7 +110,7 @@
     </section>
 
     <!-- Dress code y regalos: diseñados, ocultos en la vista pública hasta tener textos reales -->
-    <section id="detalles" class="details" aria-labelledby="details-title" data-pending>
+    <section id="detalles" class="details" aria-labelledby="details-title" data-pending data-later>
       <h2 id="details-title" class="caps-title">Para tener en cuenta</h2>
       <div class="details__grid">
         <article class="detail">
@@ -170,7 +168,7 @@
     </section>
 
     <!-- Sección especial Integral: información útil. Configurable si la pareja prefiere historia o cronología -->
-    <section id="info" class="info" aria-labelledby="info-title" data-pending>
+    <section id="info" class="info" aria-labelledby="info-title" data-pending data-later>
       <h2 id="info-title">Purmamarca y Volcán</h2>
       <p class="info__sub">Información útil para invitados</p>
       <div class="info__grid">
@@ -182,7 +180,6 @@
 
     <section id="confirmar" class="rsvp" aria-labelledby="rsvp-title">
       <h2 id="rsvp-title">Confirmá tu asistencia</h2>
-      <p class="tbd" data-pending>Pendiente: fecha límite, reglas de acompañantes y si se puede corregir una respuesta.</p>
 
       <form id="rsvp-form" class="form" novalidate aria-labelledby="rsvp-title">
         <fieldset class="form__body" disabled>
@@ -250,7 +247,7 @@
         <p class="attendance__empty" hidden>Todavía no hay confirmaciones. ¡Podés ser de las primeras personas en confirmar!</p>
         <ul class="attendance__names" aria-label="Confirmados que aceptaron mostrar su nombre" hidden></ul>
         <p class="attendance__error">No pudimos cargar los confirmados en este momento.</p>
-        <p class="demo-note" hidden>Demostración: el contador solo refleja las pruebas de esta pestaña<span class="review-only"> y datos ficticios</span>.</p>
+        <p class="demo-note" hidden>Demostración: el contador es solo de muestra.</p>
       </div>
     </section>
 
@@ -296,11 +293,10 @@
         <p class="form__done-text"></p>
         <button class="btn btn--line form__again" type="button">Escribir otro mensaje</button>
       </div>
-      <p class="tbd" data-pending>Pendiente: quién modera, reglas de publicación y plazo de aprobación.</p>
     </section>
 
     <!-- Playlist: diseñada; el reproductor se carga solo cuando el invitado lo pide (nunca autoplay) -->
-    <section id="musica" class="music" aria-labelledby="music-title" data-pending>
+    <section id="musica" class="music" aria-labelledby="music-title" data-pending data-later>
       <h2 id="music-title" class="caps-title">Música</h2>
       <p class="music__sub">La playlist del casamiento</p>
       <p class="tbd">Pendiente: link de la playlist de Spotify. El reproductor se carga solo al tocar el botón; nunca suena solo.</p>
@@ -330,6 +326,6 @@
 
   <a class="fab" href="#confirmar">Confirmar asistencia</a>
 
-  <script type="module" src="main.js?v=20261013c"></script>
+  <script type="module" src="main.js?v=20261019a"></script>
 </body>
 </html>

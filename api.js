@@ -132,7 +132,7 @@ export function resolveBackend(config, hostname) {
   return { kind: "unavailable", reason: "mode desconocido" };
 }
 
-// Datos FICTICIOS, solo para el modo revisión. Nunca se muestran en la vista pública.
+// Datos de ejemplo (no son invitados reales), solo para el modo revisión. Nunca se muestran en la vista pública.
 export const FIXTURES = {
   records: [
     { id: "f1", status: "accepted", attending: "si", people: 12, name: "Familia de ejemplo", show_name: true },
@@ -142,8 +142,8 @@ export const FIXTURES = {
     { id: "f5", status: "discarded", attending: "si", people: 9, name: "Bot de ejemplo", show_name: true },
   ],
   messages: [
-    { name: "Mensaje de ejemplo", text: "Texto ficticio para revisar el diseño de un mensaje corto." },
-    { name: "Otro ejemplo", text: "Texto ficticio más largo para revisar cómo se comporta el módulo cuando una dedicatoria ocupa varias líneas en el celular y en la pantalla grande." },
-    { name: "Tercer ejemplo", text: "Texto ficticio.\nCon un segundo renglón, como lo escribiría un invitado." },
+    { name: "Invitada de ejemplo", text: "¡Qué alegría! Ahí vamos a estar para celebrarlos." },
+    { name: "Familia de ejemplo", text: "Les deseamos un camino lleno de risas, de viajes y de tardes compartidas. Gracias por hacernos parte de un día tan especial; los vamos a abrazar fuerte." },
+    { name: "Invitado de ejemplo", text: "¡Felicitaciones!\nNos vemos en abril." },
   ],
 };

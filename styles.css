@@ -48,6 +48,8 @@ a { color: inherit; }
 /* ---------- Vista pública vs. modo revisión (?revision) ---------- */
 /* Lo pendiente nunca llega a la vista pública: ni módulos sin datos ni anotaciones de desarrollo. */
 html:not(.review) [data-pending], html:not(.review) .tbd, html:not(.review) .review-only { display: none !important; }
+/* Módulos opcionales listos pero sin contenido: ocultos también en la revisión de la pareja. Al tener el contenido, quitar data-later */
+[data-later] { display: none !important; }
 .tbd { display: inline-block; margin-top: .5rem; font: 500 .8125rem/1.35 var(--sans); letter-spacing: 0; text-transform: none; color: var(--castano);
   background: var(--marfil); border: 1px dashed color-mix(in srgb, var(--castano) 60%, transparent); border-radius: 6px; padding: .3rem .6rem; text-align: left; }
 .review-bar { position: sticky; top: 0; z-index: 30; margin: 0; padding: .5rem var(--gutter); background: var(--castano); color: var(--marfil);

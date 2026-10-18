@@ -190,7 +190,7 @@ if (typeof document !== "undefined") {
   sync();
   wire(rsvp, (raw) => validateRsvp(raw, { maxPeople: CONFIG.rsvpMaxPeople, publicNames: CONFIG.publicNames }), (p) => api.submitRsvp(p), (form, d) => {
     finish(form, api.demo
-      ? "Demostración completada. Esta respuesta no se guardó ni se envió a Dolores y Mauro: en el sitio publicado, acá aparece la confirmación de recepción."
+      ? "Así se ve la confirmación. Como es una demostración, esta respuesta no se guardó ni se envió."
       : `${d.attending === "si" ? `¡Gracias, ${d.name}! Recibimos tu confirmación.` : `Gracias por avisarnos, ${d.name}. Recibimos tu respuesta.`} Si necesitás corregir algo, enviá una nueva respuesta: Dolores y Mauro la revisan.`);
     loadStats();
   });
@@ -203,7 +203,7 @@ if (typeof document !== "undefined") {
   count();
   wire(msgForm, validateMessage, (p) => api.submitMessage(p), (form) => {
     finish(form, api.demo
-      ? "Demostración completada. El mensaje no se guardó ni se envió: en el sitio publicado queda pendiente de aprobación antes de mostrarse."
+      ? "Así se ve el envío de un mensaje. Como es una demostración, no se guardó ni se envió."
       : "¡Gracias! Tu mensaje les llega a Dolores y Mauro y aparece acá cuando lo aprueben.");
     count();
   });
