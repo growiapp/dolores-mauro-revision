@@ -24,9 +24,53 @@
   <!-- Modo revisión (?revision): vista para la pareja, con una aclaración general y datos de ejemplo. La vista pública no los muestra.
        Los datos pendientes están en deliverables/revision-fa-studio/pendientes.md -->
   <script>if (new URLSearchParams(location.search).has("revision")) document.documentElement.classList.add("review");</script>
-  <link rel="stylesheet" href="styles.css?v=20261019a">
+  <link rel="stylesheet" href="styles.css?v=20261019d">
 </head>
 <body>
+  <!-- Apertura: sobre con sello en cada visita (sin recordar nada). Esc o el botón abren; sin JS no aparece -->
+  <dialog class="opening" aria-label="Invitación de Dolores y Mauro" tabindex="-1">
+    <button class="opening__open" type="button">
+      <span class="envelope" aria-hidden="true">
+        <!-- Papel: interior (se ve al abrir), laterales con luz desde arriba a la izquierda y bolsillo inferior -->
+        <svg class="envelope__folds" viewBox="0 0 142 100" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="env-inside" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color: var(--tinta); stop-opacity: .2" /><stop offset="1" style="stop-color: var(--tinta); stop-opacity: .06" /></linearGradient>
+            <linearGradient id="env-side-l" x1="0" x2="1"><stop offset="0" style="stop-color: var(--tinta); stop-opacity: .02" /><stop offset="1" style="stop-color: var(--tinta); stop-opacity: .055" /></linearGradient>
+            <linearGradient id="env-side-r" x1="0" x2="1"><stop offset="0" style="stop-color: var(--tinta); stop-opacity: .07" /><stop offset="1" style="stop-color: var(--tinta); stop-opacity: .03" /></linearGradient>
+            <linearGradient id="env-pocket" x1="0" y1="1" x2="0" y2="0"><stop offset="0" style="stop-color: var(--papel)" /><stop offset="1" style="stop-color: var(--marfil)" /></linearGradient>
+          </defs>
+          <path d="M0 0 L71 52 L142 0 Z" fill="url(#env-inside)" />
+          <path d="M0 0 L71 52 L0 100 Z" fill="url(#env-side-l)" />
+          <path d="M142 0 L71 52 L142 100 Z" fill="url(#env-side-r)" />
+          <path class="envelope__pocket-shade" d="M0 99 L71 51 L142 99" />
+          <path d="M0 100 L71 52 L142 100 Z" fill="url(#env-pocket)" />
+          <path class="envelope__crease" d="M0 100 L71 52 L142 100" />
+        </svg>
+        <span class="envelope__flap-shadow"></span>
+        <!-- Solapa en 3D: cara exterior e interior; el sello va en su punta y se levanta con ella -->
+        <span class="envelope__flap">
+          <span class="envelope__face envelope__face--out"></span>
+          <span class="envelope__face envelope__face--in"></span>
+          <span class="envelope__seal"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="39" /></svg><span>D</span><i></i><span>M</span></span>
+        </span>
+      </span>
+      <span class="opening__cta">Abrir invitación</span>
+    </button>
+  </dialog>
+  <script>{ const d = document.currentScript.previousElementSibling, root = document.documentElement;
+    if (!d.showModal) d.remove(); else {
+      root.classList.add("sealed"); d.showModal(); d.focus(); // foco en el diálogo: sin anillo sobre el botón al cargar; Tab llega al botón
+      // El hero arranca su entrada cuando el sobre empieza a fundirse. Respaldos contra quedar trabado: si el fundido no arranca
+      // (sin transiciones) o no termina; medidos desde su inicio para no cortarlo en un equipo lento
+      let started = false;
+      const reveal = () => root.classList.remove("sealed"), finish = () => { reveal(); if (d.isConnected) { d.close(); d.remove(); } };
+      const open = () => { if (d.classList.contains("is-opening")) return; d.classList.add("is-opening"); setTimeout(() => started || finish(), 1500); };
+      d.addEventListener("transitionstart", (e) => { if (e.target !== d || started) return; started = true; reveal(); setTimeout(finish, 1500); });
+      d.addEventListener("transitionend", (e) => e.target === d && e.propertyName === "opacity" && finish());
+      d.querySelector("button").addEventListener("click", open);
+      d.addEventListener("touchstart", () => {}, { passive: true }); // iOS: sin un manejador táctil, Safari no aplica :active (el sello no se hundiría)
+      d.addEventListener("cancel", (e) => { e.preventDefault(); open(); });
+    } }</script>
   <a class="skip" href="#el-dia">Ir a horarios y lugares</a>
   <p class="review-bar" data-pending>Esta es una primera vista previa de su invitación. Algunos contenidos se completarán más adelante. Los formularios son de muestra y no registran respuestas.</p>
   <!-- Alto de la barra de revisión (0 en la vista pública): el hero móvil lo descuenta para que la banda entre en la pantalla -->

@@ -23,6 +23,7 @@
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
   --ease-soft: cubic-bezier(0.33, 1, 0.68, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1); /* arranca con velocidad: respuesta directa a un toque (solapa del sobre) */
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -371,6 +372,99 @@ body:has(.lightbox[open]) .fab { visibility: hidden; }
   .datelock--sky { width: auto; column-gap: .9rem; } /* sin ancho fijo, las columnas 1fr se ajustan al texto: sin gap, «ABRIL 2027» tocaba el filete */
   .datelock--sky time { font-size: 1.9rem; }
 }
+
+/* ---------- Apertura: sobre lacrado con el monograma D | M antes de la invitación ---------- */
+/* Mientras el sobre está cerrado, la página no se desplaza y la entrada del hero espera (arranca al abrirlo) */
+.sealed { overflow: hidden; }
+.sealed :is(.hero, .hero *, .band) { animation-play-state: paused; }
+.opening { position: fixed; inset: 0; width: 100%; height: 100%; max-width: none; max-height: none; margin: 0; border: 0;
+  padding: env(safe-area-inset-top) var(--gutter) env(safe-area-inset-bottom); color: var(--tinta);
+  background: radial-gradient(120% 85% at 50% 45%, var(--marfil) 50%, var(--papel)); }
+.opening[open] { display: grid; place-items: center; }
+.opening::backdrop { background: none; } /* el fundido tiene que dejar ver la portada, no un velo */
+/* Ancho del sobre: lo limita también el alto, para que la solapa abierta (58 % del alto, por encima) entre centrada */
+.opening__open { --env-w: min(78vw, 27rem, (100svh - 7rem) / 2.16 * 1.42); display: grid; justify-items: center; gap: clamp(1.75rem, 5vh, 2.75rem);
+  padding: 1rem; border: 0; background: none; color: inherit; font: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+@media (min-width: 768px) { .opening__open { --env-w: min(78vw, 34rem, (100svh - 7rem) / 2.16 * 1.42); } } /* tablet y escritorio: con 27rem quedaba perdido */
+.opening:focus, .opening__open:focus-visible { outline: none; }
+.opening__open:focus-visible .envelope { outline: 2px solid var(--castano); outline-offset: 8px; }
+/* Papel: luz desde arriba a la izquierda (la misma del brillo del lacre), sombra de contacto corta y cálida */
+.envelope { position: relative; display: block; width: var(--env-w); aspect-ratio: 1.42; border-radius: 2px;
+  background: linear-gradient(160deg, color-mix(in srgb, var(--papel) 55%, var(--marfil)), var(--papel) 70%);
+  box-shadow: 0 1px 2px rgb(70 61 53 / .1), 4px 18px 34px -20px rgb(70 61 53 / .34); }
+.envelope::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0;
+  box-shadow: 6px 28px 46px -24px rgb(70 61 53 / .26); } /* sombra extra del hover: se funde su opacidad, no se anima box-shadow */
+.envelope__folds { position: absolute; inset: 0; width: 100%; height: 100%; }
+.envelope__pocket-shade { fill: none; stroke: rgb(70 61 53 / .07); stroke-width: 3; vector-effect: non-scaling-stroke; }
+.envelope__crease { fill: none; stroke: var(--arena); stroke-width: 1; vector-effect: non-scaling-stroke; }
+/* Solapa: dos caras en 3D (exterior clara, interior en sombra hacia el pliegue); su sombra sobre el sobre es una capa aparte */
+.envelope__flap, .envelope__flap-shadow { position: absolute; inset: 0 0 auto; height: 58%; }
+.envelope__flap { transform-origin: 50% 0; transform: perspective(1000px) rotateX(0deg); transform-style: preserve-3d; }
+.envelope__face { position: absolute; inset: 0; -webkit-backface-visibility: hidden; backface-visibility: hidden; }
+.envelope__face--out { clip-path: polygon(0 0, 100% 0, 50% 100%);
+  background: linear-gradient(170deg, color-mix(in srgb, var(--papel) 30%, var(--marfil)), color-mix(in srgb, var(--papel) 75%, var(--marfil))); }
+.envelope__face--in { clip-path: polygon(0 100%, 100% 100%, 50% 0); transform: rotateX(180deg); visibility: hidden; /* WebKit no respeta backface-visibility acá: la cara la decide visibility */
+  background: linear-gradient(to top, color-mix(in srgb, var(--papel) 90%, var(--tinta)), var(--papel)); }
+.envelope__flap-shadow { translate: 0 1.5px; filter: blur(1.5px); opacity: .6; }
+.envelope__flap-shadow::before { content: ""; position: absolute; inset: 0; clip-path: polygon(0 0, 100% 0, 50% 100%); background: rgb(70 61 53 / .3); }
+/* Lacre: borde levemente irregular, impronta hundida con filete y monograma D | M del sitio (en relieve, no impreso) */
+.envelope__seal { --s: max(3.25rem, var(--env-w) * .21); position: absolute; left: 50%; top: 100%; width: var(--s); aspect-ratio: 1; translate: -50% -50%;
+  display: flex; align-items: center; justify-content: center; column-gap: .5em;
+  font: 300 calc(var(--s) * .25)/1 var(--serif); font-variation-settings: var(--display); color: color-mix(in srgb, var(--marfil) 95%, var(--castano)); /* ≥ 5:1 aun sobre el brillo del lacre */
+  text-shadow: 0 -1px 0 rgb(46 30 20 / .35), 0 1px 0 rgb(255 255 255 / .14);
+  filter: drop-shadow(0 1px 1px rgb(46 30 20 / .3)) drop-shadow(3px 5px 6px rgb(70 61 53 / .3));
+  -webkit-backface-visibility: hidden; backface-visibility: hidden; } /* pasados los 90° queda del lado de atrás de la solapa */
+.envelope__seal::before { content: ""; position: absolute; inset: 0; z-index: -1;
+  background: radial-gradient(circle at 36% 30%, color-mix(in srgb, var(--castano) 93%, white), var(--castano) 55%, color-mix(in srgb, var(--castano) 80%, black));
+  --wax: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M99.0 50.0 L99.4 54.9 L97.9 59.5 L95.2 63.7 L92.6 67.7 L90.8 71.8 L89.0 76.1 L86.7 80.1 L83.7 83.7 L80.2 86.8 L76.4 89.5 L72.2 91.5 L67.9 93.2 L63.7 95.2 L59.4 97.5 L54.9 99.3 L50.0 99.6 L45.3 98.0 L40.9 95.8 L36.6 94.3 L32.0 93.4 L27.4 92.2 L23.4 89.9 L19.9 86.7 L16.8 83.2 L13.9 79.6 L11.3 75.9 L8.7 72.1 L6.0 68.2 L3.2 64.2 L1.4 59.7 L1.3 54.8 L2.5 50.0 L3.6 45.4 L3.9 40.8 L4.0 36.0 L5.1 31.4 L7.6 27.4 L10.9 23.9 L14.2 20.6 L17.3 17.3 L20.5 14.0 L23.8 10.8 L27.4 7.6 L31.3 4.9 L35.8 3.2 L40.6 2.9 L45.4 3.2 L50.0 3.0 L54.7 2.2 L59.6 1.9 L64.2 3.1 L68.3 5.9 L71.9 9.0 L75.6 11.8 L79.4 14.2 L83.2 16.8 L86.7 19.9 L89.9 23.3 L92.6 27.2 L94.3 31.6 L95.2 36.3 L96.0 40.8 L97.4 45.3Z'/%3E%3C/svg%3E");
+  -webkit-mask: var(--wax) center / 100% 100% no-repeat; mask: var(--wax) center / 100% 100% no-repeat; }
+.envelope__seal::after { content: ""; position: absolute; inset: 11%; border-radius: 50%; pointer-events: none;
+  box-shadow: inset 0 1px 2px rgb(30 18 10 / .5), inset 0 -1px 1px rgb(255 255 255 / .1), 0 1px 0 rgb(255 255 255 / .12); }
+.envelope__seal i { width: 1px; height: 1.1em; background: currentColor; opacity: .75; }
+.envelope__seal svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.envelope__seal circle { fill: none; stroke: rgb(245 240 232 / .3); stroke-width: 1; vector-effect: non-scaling-stroke; }
+/* Celular en horizontal: poco alto. El sobre se achica menos y deja arriba el lugar de la solapa abierta */
+@media (orientation: landscape) and (max-height: 500px) {
+  .opening__open { --env-w: min(60vw, (100svh - 5.5rem) / 1.58 * 1.42); gap: 1rem; padding-top: calc(var(--env-w) / 1.42 * .58); }
+}
+.opening__cta { padding-bottom: .45rem; border-bottom: 1px solid color-mix(in srgb, var(--oliva) 35%, transparent);
+  font: 500 .8125rem/1 var(--sans); letter-spacing: .28em; text-transform: uppercase; color: var(--oliva); }
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Llegada: el sobre se posa, el filete del lacre se dibuja y aparece la invitación a abrir */
+  .opening[open] .envelope { animation: settle-in 900ms var(--ease-out) 100ms backwards; }
+  .opening[open] .envelope__seal circle { stroke-dasharray: 245; stroke-dashoffset: 245; animation: draw 1.2s var(--ease-in-out) .45s forwards; }
+  .opening[open] .opening__cta { animation: rise 600ms var(--ease-out) 750ms backwards; }
+  .envelope { transition: translate 300ms var(--ease-out), opacity 300ms var(--ease-out) 340ms; }
+  .envelope::after { transition: opacity 300ms ease; }
+  @media (hover: hover) and (pointer: fine) {
+    .opening__open:hover .envelope { translate: 0 -3px; }
+    .opening__open:hover .envelope::after { opacity: 1; }
+  }
+  /* Presión: el lacre se hunde (160 ms) */
+  .envelope__seal { transition: scale 160ms var(--ease-out), opacity 140ms var(--ease-in-out), visibility 0s 90ms; }
+  .opening__open:active .envelope__seal { scale: .96; }
+  /* Abrir (t = 0): la solapa gira sin demora llevando el lacre en la punta (90° a los ≈ 100 ms); el lacre se desvanece
+     mientras llega de canto. El llamado se va enseguida, para no quedar sobre la pareja */
+  .envelope__flap { transition: transform 560ms var(--ease-drawer); }
+  .envelope__flap-shadow { transition: opacity 200ms var(--ease-out); }
+  .opening__cta { transition: opacity 150ms var(--ease-out); }
+  .is-opening .envelope__flap { transform: perspective(1000px) rotateX(180deg); }
+  .is-opening :is(.envelope__seal, .envelope__flap-shadow, .opening__cta) { opacity: 0; }
+  /* A los 90 ms la solapa cruza los 90°: se cambia de cara (exterior y lacre se ocultan, aparece la interior) */
+  .is-opening .envelope__face { transition: visibility 0s 90ms; }
+  .is-opening :is(.envelope__face--out, .envelope__seal) { visibility: hidden; }
+  .is-opening .envelope__face--in { visibility: visible; }
+  /* Sobre abierto un instante (≈ 160 ms); se va el sobre (340–640 ms) antes de que el fondo deje ver la foto: sin pliegues
+     sobre la pareja. Total ≈ 1 s */
+  .is-opening .envelope { opacity: 0; }
+  .opening { transition: opacity 600ms var(--ease-soft) 420ms; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .opening { transition: opacity 300ms var(--ease-out); }
+}
+.opening.is-opening { opacity: 0; pointer-events: none; }
+@keyframes settle-in { from { opacity: 0; translate: 0 14px; } }
 
 /* ---------- Motion: apertura de portada + revelado de fotos + microinteracciones ---------- */
 @media (prefers-reduced-motion: no-preference) {
