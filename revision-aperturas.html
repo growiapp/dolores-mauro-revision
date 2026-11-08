@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Dos maneras de abrir la invitación · Dolores y Mauro</title>
+  <link rel="icon" href="data:,">
+  <!-- Revisión privada para Dolores y Mauro: cada modalidad con una apertura asignada solo para mostrar (con costo → A1,
+       sin costo → A2) y un selector para intercambiarlas. Las vistas previas y los enlaces son la invitación real
+       (index.html?invitacion=…&apertura=a1|a2&revision). No elige ganadora ni cambia el contenido. -->
+  <style>
+    @font-face { font-family: "Fraunces"; src: url("public/fonts/fraunces-latin-full-normal.woff2") format("woff2"); font-weight: 100 900; font-display: swap; }
+    @font-face { font-family: "Pinyon Script"; src: url("public/fonts/pinyon-script-latin-400-normal.woff2") format("woff2"); font-display: swap; }
+    @font-face { font-family: "Figtree"; src: url("public/fonts/figtree-latin-wght-normal.woff2") format("woff2"); font-weight: 300 900; font-display: swap; }
+    :root { --marfil: #F5F0E8; --papel: #EDE6DA; --arena: #D7CCBA; --oliva: #48553E; --castano: #7A4A33; --tinta: #463D35;
+      --suave: color-mix(in srgb, var(--tinta) 78%, var(--marfil)); --gutter: clamp(1rem, 5vw, 4rem); --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+      --serif: "Fraunces", Georgia, serif; --sans: "Figtree", system-ui, sans-serif; --display: "opsz" 144, "SOFT" 100, "WONK" 0; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--marfil); color: var(--tinta); font: 400 1rem/1.6 var(--sans); }
+    :focus-visible { outline: 2px solid var(--castano); outline-offset: 3px; border-radius: 2px; }
+    .eyebrow { font: 500 .72rem/1.3 var(--sans); letter-spacing: .28em; text-transform: uppercase; color: var(--castano); margin: 0; }
+
+    header { max-width: 72rem; margin: 0 auto; padding: clamp(2.5rem, 7vw, 5rem) var(--gutter) clamp(1.5rem, 4vw, 2.5rem); display: grid; gap: 1.25rem; }
+    h1 { font: 300 clamp(2.4rem, 8vw, 4.6rem)/1 var(--serif); font-variation-settings: var(--display); letter-spacing: -.02em; margin: 0; text-wrap: balance; }
+    h1 .script { font-family: "Pinyon Script", cursive; color: var(--castano); font-size: .8em; }
+    .lead { max-width: 60ch; margin: 0; font-size: 1.06rem; }
+    .look { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: .5rem 2rem; margin: .5rem 0 0; padding: 1.1rem 0 0;
+      border-top: 1px solid var(--arena); list-style: none; color: var(--suave); font-size: .94rem; }
+    .look b { display: block; color: var(--tinta); font-weight: 600; }
+
+    main { max-width: 72rem; margin: 0 auto; padding: 0 var(--gutter) 4rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 26rem), 1fr)); gap: clamp(1.5rem, 4vw, 3rem); }
+    .card { background: var(--papel); padding: clamp(1.25rem, 3.5vw, 2rem); display: grid; gap: 1.1rem; justify-items: center; align-content: start; }
+    .card__head { justify-self: stretch; display: grid; gap: .35rem; }
+    .card h2 { font: 300 clamp(1.7rem, 4.5vw, 2.2rem)/1.05 var(--serif); font-variation-settings: var(--display); margin: 0; letter-spacing: -.01em; }
+    .card__desc { margin: 0; color: var(--suave); font-size: .95rem; min-height: 4.8em; } /* tres líneas: las dos pantallas quedan a la misma altura */
+
+    /* Selector de apertura: dos opciones, una marcada (no cambia el contenido de la invitación) */
+    .pick { justify-self: stretch; display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--arena); background: var(--marfil); }
+    .pick button { font: 500 .8rem/1.2 var(--sans); letter-spacing: .04em; color: var(--tinta); background: none; border: 0; padding: .7rem .5rem; cursor: pointer;
+      transition: background-color .2s var(--ease-out), color .2s var(--ease-out); }
+    .pick button[aria-pressed="true"] { background: var(--tinta); color: var(--marfil); }
+    .pick small { display: block; font-size: .68rem; letter-spacing: .2em; text-transform: uppercase; opacity: .75; margin-bottom: .15rem; }
+
+    /* Vista previa: la invitación real a tamaño de celular, reducida. Se toca para abrir */
+    .phone { position: relative; width: var(--pw); height: calc(var(--pw) * 844 / 390); overflow: hidden; border-radius: 22px; background: var(--tinta);
+      box-shadow: 0 0 0 6px var(--tinta), 0 24px 50px -24px rgb(60 45 30 / .55); margin: 6px; }
+    .phone iframe { position: absolute; left: 0; top: 0; width: 390px; height: 844px; border: 0; transform-origin: 0 0; transform: scale(calc(var(--pw) / 390px)); }
+    .card { --pw: min(300px, calc(100vw - 2 * var(--gutter) - 4rem)); }
+    .hint { margin: -.25rem 0 0; font-size: .85rem; color: var(--suave); text-align: center; }
+    .actions { display: flex; flex-wrap: wrap; gap: .6rem 1.5rem; justify-content: center; }
+    .actions :is(a, button) { font: 500 .78rem/1 var(--sans); letter-spacing: .2em; text-transform: uppercase; color: var(--oliva); background: none; border: 0;
+      padding: .55rem 0; cursor: pointer; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .45em; text-decoration-color: color-mix(in srgb, currentColor 45%, transparent); }
+    @media (hover: hover) and (pointer: fine) { .actions :is(a, button):hover { text-decoration-color: currentColor; } }
+    footer { max-width: 72rem; margin: 0 auto; padding: 0 var(--gutter) 3rem; color: var(--suave); font-size: .88rem; }
+    footer p { margin: 0; max-width: 64ch; }
+    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  </style>
+</head>
+<body>
+  <header>
+    <p class="eyebrow">Para Dolores y Mauro</p>
+    <h1>Dos maneras de abrir <span class="script">la</span> invitación</h1>
+    <p class="lead">Es lo primero que van a ver sus invitados, antes de los horarios y los detalles. Les preparamos dos propuestas y las pusimos en las dos invitaciones para que las prueben en la invitación de verdad. Toquen cada pantalla para abrirla, o abran la invitación completa en el celular.</p>
+    <ul class="look">
+      <li><b>Lo que cambia es solo la entrada.</b> El contenido de cada invitación es el mismo con cualquiera de las dos.</li>
+      <li><b>Prueben las dos en las dos.</b> Con el selector de cada tarjeta pueden intercambiarlas.</li>
+      <li><b>Fíjense en el primer momento.</b> Qué sienten al verla quieta, cómo se abre y cómo llega a la foto de la portada.</li>
+    </ul>
+  </header>
+  <main>
+    <article class="card" data-inv="celebracion" data-ap="a1">
+      <div class="card__head"><p class="eyebrow">Invitación con costo</p><h2></h2><p class="card__desc"></p></div>
+      <div class="pick" role="group" aria-label="Apertura de la invitación con costo"></div>
+      <div class="phone"><iframe title="Vista previa: invitación con costo"></iframe></div>
+      <p class="hint">Toquen la pantalla para abrirla</p>
+      <div class="actions"><button type="button" data-replay>Ver de nuevo</button><a target="_blank" rel="noopener">Abrir la invitación completa<span class="sr-only"> (se abre en otra pestaña)</span></a></div>
+    </article>
+    <article class="card" data-inv="ceremonia" data-ap="a2">
+      <div class="card__head"><p class="eyebrow">Invitación sin costo</p><h2></h2><p class="card__desc"></p></div>
+      <div class="pick" role="group" aria-label="Apertura de la invitación sin costo"></div>
+      <div class="phone"><iframe title="Vista previa: invitación sin costo"></iframe></div>
+      <p class="hint">Toquen la pantalla para abrirla</p>
+      <div class="actions"><button type="button" data-replay>Ver de nuevo</button><a target="_blank" rel="noopener">Abrir la invitación completa<span class="sr-only"> (se abre en otra pestaña)</span></a></div>
+    </article>
+  </main>
+  <footer><p>Para mostrarlas, la invitación con costo empieza con la primera propuesta y la sin costo con la segunda; no es una elección. Los formularios son de muestra y no registran respuestas.</p></footer>
+  <script>
+    const AP = {
+      a1: { tag: "Propuesta 1", name: "Del primer plano al lugar", desc: "Empieza cerca de ustedes, con una foto de esa tarde, y al abrir la cámara se aleja hasta el campo de la portada." },
+      a2: { tag: "Propuesta 2", name: "Álbum de autor", desc: "Una página de álbum con la foto montada y una hoja de calco con sus nombres. Al abrir, el calco se da vuelta y la foto crece hasta ser la portada." },
+    };
+    for (const card of document.querySelectorAll(".card")) {
+      const frame = card.querySelector("iframe"), link = card.querySelector(".actions a"), pick = card.querySelector(".pick");
+      pick.innerHTML = Object.entries(AP).map(([k, v]) => `<button type="button" data-k="${k}"><small>${v.tag}</small>${v.name}</button>`).join("");
+      const show = () => {
+        const ap = card.dataset.ap, url = `index.html?invitacion=${card.dataset.inv}&apertura=${ap}&revision`;
+        card.querySelector("h2").textContent = AP[ap].name;
+        card.querySelector(".card__desc").textContent = AP[ap].desc;
+        pick.querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", b.dataset.k === ap));
+        link.href = url;
+        frame.src = `${url}&t=${Date.now()}`; // recarga: la apertura vuelve a empezar
+      };
+      pick.addEventListener("click", (e) => { const b = e.target.closest("button"); if (b && b.dataset.k !== card.dataset.ap) { card.dataset.ap = b.dataset.k; show(); } });
+      card.querySelector("[data-replay]").addEventListener("click", show);
+      show();
+    }
+  </script>
+</body>
+</html>

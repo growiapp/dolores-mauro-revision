@@ -1,5 +1,5 @@
 // Adaptadores de persistencia (contrato v2). Ningún éxito se da por bueno sin una confirmación verificable del servidor.
-import { parseStats, parseMessages, computePublicStats } from "./contract.js";
+import { parseMessages } from "./contract.js";
 export { DIETS, validateRsvp, validateMessage } from "./contract.js";
 
 // kind: "network" | "timeout" | "invalid_response" → resultado incierto (puede haberse guardado; reintentar es seguro)
@@ -82,22 +82,18 @@ export function createHttpAdapter(base, { transport = "json", routeStyle = "path
     demo: false,
     submitRsvp: (payload) => write("rsvp", payload),
     submitMessage: (payload) => write("messages", payload),
-    getStats: () => read("public/stats", parseStats),
     getMessages: () => read("public/messages", parseMessages),
   };
 }
 
 // Adaptador de DEMOSTRACIÓN: memoria de la pestaña. No guarda, no envía y no notifica a nadie.
-// Aplica la misma política de contador que el servidor (computePublicStats).
-export function createDemoAdapter({ fail = false, fixtures = false, publishNames = false } = {}) {
-  const records = fixtures ? FIXTURES.records.map((r) => ({ ...r })) : [];
+export function createDemoAdapter({ fail = false, fixtures = false } = {}) {
   const wait = () => new Promise((r) => setTimeout(r, 400));
   const guard = async () => { await wait(); if (fail) throw new ApiError("network"); };
   return {
     demo: true,
-    async submitRsvp(p) { await guard(); records.push({ ...p, id: p.request_id, status: p.website ? "discarded" : "accepted" }); return { ok: true, code: "demo" }; },
+    async submitRsvp() { await guard(); return { ok: true, code: "demo" }; },
     async submitMessage() { await guard(); return { ok: true, code: "demo" }; },
-    async getStats() { return parseStats(computePublicStats(records, { publishNames: publishNames || fixtures })); },
     async getMessages() { return fixtures ? parseMessages({ ok: true, items: FIXTURES.messages }) : []; },
   };
 }
@@ -134,13 +130,6 @@ export function resolveBackend(config, hostname) {
 
 // Datos de ejemplo (no son invitados reales), solo para el modo revisión. Nunca se muestran en la vista pública.
 export const FIXTURES = {
-  records: [
-    { id: "f1", status: "accepted", attending: "si", people: 12, name: "Familia de ejemplo", show_name: true },
-    { id: "f2", status: "accepted", attending: "si", people: 2, name: "Invitada de ejemplo", show_name: true },
-    { id: "f3", status: "accepted", attending: "si", people: 1, name: "Invitada de ejemplo", show_name: true },
-    { id: "f4", status: "accepted", attending: "si", people: 3, name: "Invitado de ejemplo", show_name: false },
-    { id: "f5", status: "discarded", attending: "si", people: 9, name: "Bot de ejemplo", show_name: true },
-  ],
   messages: [
     { name: "Invitada de ejemplo", text: "¡Qué alegría! Ahí vamos a estar para celebrarlos." },
     { name: "Familia de ejemplo", text: "Les deseamos un camino lleno de risas, de viajes y de tardes compartidas. Gracias por hacernos parte de un día tan especial; los vamos a abrazar fuerte." },

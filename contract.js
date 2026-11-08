@@ -1,8 +1,10 @@
-// Contrato de datos v2 (deliverables/phase2b-preparation/data-contract-v2.md).
-// Módulo sin dependencias del DOM: lo usan el navegador, los tests y sirve de referencia para el servidor.
+// Contrato de datos v3: RSVP por familia o grupo (deliverables/evolucion-v2/README.md §RSVP).
+// Módulo sin dependencias del DOM: lo usan el navegador, los tests y el servidor (backend/build.mjs lo copia a Contrato.gs).
 
-export const LIMITS = { name: 80, msgName: 60, companions: 300, dietNotes: 200, comments: 500, text: 500, bodyBytes: 4096 };
+export const LIMITS = { group: 80, name: 80, member: 80, dietNotes: 120, msgName: 60, text: 500, bodyBytes: 8192 };
 export const DIETS = { vegetariano: "Vegetariano", vegano: "Vegano", "sin-tacc": "Sin TACC (celíaco)", otra: "Otra" };
+// Modalidades de invitación (ids públicos de los enlaces). Sus nombres legibles viven solo en el servidor.
+export const MODALITIES = ["ceremonia", "celebracion"];
 
 // Caracteres invisibles o peligrosos: controles (Cc) y de formato (Cf: ancho cero, bidi, BOM…).
 const INVISIBLE = /[\p{Cc}\p{Cf}\p{Zl}\p{Zp}]/gu;
@@ -31,30 +33,40 @@ const bool = (v) => v === true || v === "on" || v === "true";
 // Clave de agrupación de posibles duplicados (NO reemplaza nada: solo agrupa para revisión).
 export const dedupeKey = (name) => cleanLine(name, 200).toLowerCase().normalize("NFD").replace(/\p{M}/gu, "").replace(/[^\p{L}\p{N} ]/gu, "").trim();
 
-// RSVP. `publicNames` indica si la regla de publicación de nombres está activa (decisión de la pareja).
-export function validateRsvp(input, { maxPeople = 10, publicNames = false } = {}) {
+// RSVP de una familia o grupo: una respuesta con quién confirma (name), el grupo y las personas que asisten.
+// La cantidad no se escribe: es la cantidad de personas listadas. Quien no asiste no lista personas.
+// Errores por integrante: "members.<i>.name" y "members.<i>.diet_notes" (los pinta el formulario junto a cada fila).
+export function validateRsvp(input, { maxPeople = 10 } = {}) {
   const errors = {};
   const data = {
+    group: cleanLine(input.group, LIMITS.group),
     name: cleanLine(input.name, LIMITS.name),
     attending: input.attending === "si" || input.attending === "no" ? input.attending : "",
+    members: [],
     people: 0,
-    companions: cleanLine(input.companions, LIMITS.companions),
-    diet: [...new Set([].concat(input.diet == null ? [] : input.diet))].filter((d) => Object.prototype.hasOwnProperty.call(DIETS, d)), // sin Object.hasOwn: también corre en Apps Script
-    diet_notes: cleanLine(input.diet_notes, LIMITS.dietNotes),
-    comments: cleanText(input.comments, LIMITS.comments),
-    show_name: publicNames && bool(input.show_name),
+    modality: MODALITIES.indexOf(input.modality) >= 0 ? input.modality : "",
   };
+  if (letters(data.group) < 2) errors.group = "Escribí el nombre de la familia o del grupo.";
   if (letters(data.name) < 2) errors.name = "Escribí tu nombre y apellido.";
-  if (!data.attending) errors.attending = "Elegí si vas a poder venir.";
+  if (!data.attending) errors.attending = "Elegí si van a poder venir.";
+  if (!data.modality) errors.modality = "Abrí la invitación desde el enlace que te enviaron.";
   if (data.attending === "si") {
-    const raw = String(orEmpty(input.people)).trim();
-    const n = /^\d{1,2}$/.test(raw) ? Number(raw) : NaN;
-    if (!(n >= 1 && n <= maxPeople)) errors.people = `Indicá cuántas personas confirman (de 1 a ${maxPeople}).`;
-    else data.people = n;
-    if (data.diet.includes("otra") && !data.diet_notes) errors.diet_notes = "Contanos qué restricción alimentaria tenés.";
-  } else {
-    // Quien no asiste no suma personas ni datos de menú, y nunca aparece en la lista pública.
-    Object.assign(data, { companions: "", diet: [], diet_notes: "", show_name: false });
+    const raw = Array.isArray(input.members) ? input.members : [];
+    if (raw.length > maxPeople) errors.members = `Como máximo ${maxPeople} personas por respuesta. Si son más, envíen otra respuesta.`;
+    raw.slice(0, maxPeople).forEach((m, i) => {
+      const o = m && typeof m === "object" && !Array.isArray(m) ? m : {};
+      const member = {
+        name: cleanLine(o.name, LIMITS.member),
+        diet: Object.prototype.hasOwnProperty.call(DIETS, o.diet) ? o.diet : "", // sin Object.hasOwn: también corre en Apps Script
+        diet_notes: "",
+      };
+      if (member.diet === "otra") member.diet_notes = cleanLine(o.diet_notes, LIMITS.dietNotes);
+      if (letters(member.name) < 2) errors["members." + i + ".name"] = "Escribí el nombre de esta persona.";
+      if (member.diet === "otra" && !member.diet_notes) errors["members." + i + ".diet_notes"] = "Contanos qué restricción tiene.";
+      data.members.push(member);
+    });
+    if (!raw.length) errors.members = "Agregá al menos una persona que asista.";
+    data.people = data.members.length;
   }
   return { ok: Object.keys(errors).length === 0, errors, data };
 }
@@ -70,13 +82,7 @@ export function validateMessage(input) {
 // Tamaño del cuerpo tal como viaja (UTF-8).
 export const bodyBytes = (obj) => new TextEncoder().encode(JSON.stringify(obj)).length;
 
-// ---------- Lecturas públicas: se validan antes de pintar ----------
-export function parseStats(body) {
-  if (!body || body.ok !== true || !Number.isInteger(body.people) || body.people < 0 || !Array.isArray(body.names)) return null;
-  const names = body.names.filter((n) => typeof n === "string").map((n) => cleanLine(n, LIMITS.name)).filter((n) => letters(n) >= 2).slice(0, 500);
-  return { people: body.people, names };
-}
-
+// ---------- Lectura pública: se valida antes de pintar ----------
 export function parseMessages(body) {
   if (!body || body.ok !== true || !Array.isArray(body.items)) return null;
   return body.items
@@ -84,26 +90,4 @@ export function parseMessages(body) {
     .map((m) => ({ name: cleanLine(m.name, LIMITS.msgName), text: cleanText(m.text, LIMITS.text) }))
     .filter((m) => m.name && m.text)
     .slice(0, 50);
-}
-
-// ---------- Contador público (implementación de referencia de la política v2) ----------
-// Registros: { id, status: "received"|"accepted"|"discarded", superseded_by, attending, people, name, show_name, created_at }
-// - Solo computan respuestas "accepted" no reemplazadas por la administración.
-// - Posibles duplicados (misma clave de nombre) computan UNA vez: el mayor `people` entre sus "sí".
-//   Un "no" nunca resta automáticamente un "sí" (evita suplantación); lo resuelve la administración.
-// - Cada respuesta computa como máximo `capPerResponse` personas hasta que la administración la revise.
-// - Nombres: solo si la regla está activa, la persona dio permiso y asiste.
-export function computePublicStats(records, { capPerResponse = 10, publishNames = false } = {}) {
-  const groups = new Map();
-  for (const r of records) {
-    if (r.status !== "accepted" || r.superseded_by || r.attending !== "si") continue;
-    const k = dedupeKey(r.name);
-    const people = Math.min(Number.isInteger(r.people) ? r.people : 0, r.reviewed ? Infinity : capPerResponse);
-    const g = groups.get(k) || { people: 0, name: null };
-    g.people = Math.max(g.people, people);
-    if (publishNames && r.show_name && !g.name) g.name = cleanLine(r.name, LIMITS.name);
-    groups.set(k, g);
-  }
-  const all = [...groups.values()];
-  return { ok: true, code: "stats", people: all.reduce((n, g) => n + g.people, 0), names: publishNames ? all.map((g) => g.name).filter(Boolean) : [] };
 }

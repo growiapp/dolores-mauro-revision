@@ -1,0 +1,142 @@
+/* Aperturas en revisión (A1 y A2) sobre el sitio real: index.html?apertura=a1|a2. Sin el parámetro queda la apertura actual
+   (ventana en arco, styles.css). Independientes de ?invitacion=: la modalidad decide el contenido; la apertura, solo la entrada.
+   Origen y criterios: prototype/exploracion/ y deliverables/evolucion-v2/aperturas-exploracion.md.
+   Al elegir una, se queda la suya y se borra la otra. */
+.op { --noche: #1E1B17; --ease-cine: cubic-bezier(0.45, 0, 0.15, 1); /* cámara: arranca suave y frena largo */
+  position: fixed; inset: 0; width: 100%; height: 100%; max-width: none; max-height: none; margin: 0; padding: 0; border: 0;
+  background: transparent; color: var(--tinta); overflow: hidden; }
+.op::backdrop { background: transparent; }
+.op__btn { all: unset; position: absolute; inset: 0; display: block; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.op__btn > * { position: absolute; display: block; }
+.op img { display: block; width: 100%; height: 100%; max-width: none; object-fit: cover; }
+
+/* Llamado: rótulo con filete; el foco visible lo completa (sin caja) */
+.op__cta { font: 500 .75rem/1 var(--sans); letter-spacing: .3em; text-transform: uppercase; padding: .35rem 0 .6rem .3em; white-space: nowrap; }
+.op__cta::after { content: ""; position: absolute; left: .3em; right: 0; bottom: 0; height: 1px; background: currentColor; opacity: .55;
+  transform: scaleX(.45); transform-origin: left; transition: transform .25s var(--ease-out), opacity .25s; }
+.op__btn:focus-visible .op__cta::after { transform: none; opacity: 1; height: 2px; }
+@media (hover: hover) and (pointer: fine) { .op__btn:hover .op__cta::after { transform: none; opacity: .9; } }
+
+/* ---------- A1 · Del primer plano al lugar (editorial cinematográfica) ----------
+   Primer plano a sangre con los nombres como títulos de crédito; al abrir, el primer plano se funde en el plano general,
+   que arranca acercado sobre la pareja y retrocede hasta ser exactamente la portada */
+.a1 { background: var(--noche); color: var(--marfil); }
+.a1__wide, .a1__close, .a1__scrim { inset: 0; }
+.a1__wide { opacity: 0; will-change: transform, opacity; transform: scale(var(--z, 1.7)); transform-origin: var(--ox) var(--oy); }
+.a1__close { overflow: hidden; }
+.a1__close img { object-position: 50% 16%; will-change: transform, opacity; animation: a1-develop 1.1s var(--ease-out) backwards; }
+.a1__scrim { background:
+    linear-gradient(to bottom, rgb(30 27 23 / .58), rgb(30 27 23 / 0) 22%),
+    linear-gradient(to top, rgb(30 27 23 / .9) 0, rgb(30 27 23 / .66) 30%, rgb(30 27 23 / 0) 60%); }
+.a1__kicker, .a1__date, .a1 .op__cta { font: 500 .7rem/1.2 var(--sans); letter-spacing: .3em; text-transform: uppercase; }
+.a1__kicker { top: calc(env(safe-area-inset-top) + 1.4rem); left: var(--gutter); opacity: .88; }
+.a1__names { left: var(--gutter); right: var(--gutter); bottom: calc(env(safe-area-inset-bottom) + 8.6rem);
+  font: 300 min(19vw, 8.5rem)/.86 var(--serif); font-variation-settings: var(--display); letter-spacing: -.025em; }
+.a1__names > span { display: block; }
+.a1__names > span + span { padding-left: .62em; }
+.a1__names .script { font-size: .62em; color: var(--arena); margin-right: .1em; }
+.a1__date { left: var(--gutter); bottom: calc(env(safe-area-inset-bottom) + 5.9rem); letter-spacing: .22em; opacity: .9; }
+.a1 .op__cta { left: var(--gutter); bottom: calc(env(safe-area-inset-bottom) + 1.9rem); color: var(--marfil); }
+.a1__kicker, .a1__date, .a1 .op__cta { animation: a1-rise .7s var(--ease-out) .65s backwards; }
+.a1__names { animation: a1-unmask 1.1s var(--ease-out) .35s backwards; }
+.a1 .op__cta { animation-delay: .85s; }
+@media (orientation: landscape) {
+  .a1__close img { object-position: 50% 32%; }
+  .a1__scrim { background:
+      linear-gradient(90deg, rgb(30 27 23 / .62), rgb(30 27 23 / .28) 42%, rgb(30 27 23 / 0) 66%),
+      linear-gradient(to top, rgb(30 27 23 / .55), rgb(30 27 23 / 0) 40%); }
+  .a1__kicker { top: 2.4rem; }
+  .a1__names { right: auto; bottom: 7.4rem; font-size: clamp(4rem, min(9.4vw, 17vh), 10.5rem); }
+  .a1__date { bottom: 5rem; }
+  .a1 .op__cta { left: auto; right: var(--gutter); bottom: 4.85rem; }
+}
+@media (orientation: landscape) and (max-height: 500px) {
+  .a1__kicker { top: 1.1rem; }
+  .a1__names { bottom: 4.2rem; }
+  .a1__date { bottom: 2.3rem; }
+  .a1 .op__cta { bottom: 1.9rem; }
+}
+.a1.is-opening :is(.a1__kicker, .a1__names, .a1__date, .op__cta) { animation: none; opacity: 0; transform: translateY(-10px);
+  transition: opacity .32s var(--ease-out), transform .32s var(--ease-out), clip-path .32s; }
+.a1.is-opening .a1__names { clip-path: inset(-25% -6% -25% -6%); transition-delay: .04s; }
+.a1.is-opening .a1__date { transition-delay: .08s; }
+.a1.is-playing { background-color: transparent; transition: background-color .7s .15s; }
+.a1.is-playing .a1__wide { opacity: 1; transform: none; transition: transform 1.6s var(--ease-cine), opacity .55s var(--ease-out) .1s; }
+.a1.is-playing .a1__close img { animation: none; opacity: 0; transform: scale(1.08); transition: opacity .7s var(--ease-in-out) .12s, transform 1.1s var(--ease-out); }
+.a1.is-playing .a1__scrim { opacity: 0; transition: opacity .5s var(--ease-out); }
+@keyframes a1-develop { from { opacity: 0; transform: scale(1.035); } }
+@keyframes a1-rise { from { opacity: 0; transform: translateY(8px); } }
+@keyframes a1-unmask { from { clip-path: inset(-25% -6% 100% -6%); transform: translateY(.12em); } to { clip-path: inset(-25% -6% -25% -6%); transform: none; } }
+
+/* ---------- A2 · Álbum de autor ----------
+   Página de álbum: la portada en chico como lámina montada, un segundo positivo y el calco con los nombres. Al abrir, el calco
+   se da vuelta sobre el lomo y la lámina crece hasta ser la portada (vive a su tamaño y se reduce con transform: crece nítida) */
+.a2 { --mat: 9px; }
+.a2__page { inset: 0; background: var(--grain), var(--papel); }
+.a2__slot { visibility: hidden; right: var(--gutter); top: calc(env(safe-area-inset-top) + 9svh); width: 64vw; aspect-ratio: var(--ar, .55); }
+.a2__print { transform-origin: 0 0; transform: translate(var(--dx), var(--dy)) scale(var(--s)); opacity: 0; }
+.a2.is-fit .a2__print { opacity: 1; animation: a2-lay .9s var(--ease-out) .15s backwards; }
+.a2__print::before { content: ""; position: absolute; inset: calc(var(--mat) / var(--s) * -1); z-index: -1; background: var(--marfil);
+  box-shadow: 0 calc(1px / var(--s)) calc(1px / var(--s)) rgb(60 45 30 / .12), 0 calc(14px / var(--s)) calc(34px / var(--s)) calc(-8px / var(--s)) rgb(60 45 30 / .32); }
+.a2__print img { position: relative; }
+.a2__second { left: calc(var(--gutter) + 4vw); top: 69svh; width: 29vw; aspect-ratio: 2 / 3;
+  box-shadow: 0 0 0 var(--mat) var(--marfil), 0 12px 30px -10px rgb(60 45 30 / .35); animation: a2-lay .9s var(--ease-out) backwards; }
+.a2__second img { object-position: 60% 50%; }
+.a2__vellum { left: 0; top: 0; bottom: 0; width: 72vw; transform-origin: 0 50%; backface-visibility: hidden;
+  background: var(--grain), rgb(246 242 235 / .74); box-shadow: 1px 0 0 rgb(70 61 53 / .1), 18px 0 40px -24px rgb(60 45 30 / .4);
+  animation: a2-slide .9s var(--ease-out) backwards; }
+.a2__vellum > * { position: absolute; display: block; }
+.a2__names { display: block; font: 300 17vw/.88 var(--serif); font-variation-settings: var(--display); letter-spacing: -.025em; color: var(--tinta); }
+.a2__names > span { display: block; }
+.a2__names > span + span { padding-left: .55em; }
+.a2__names .script { font-size: .62em; color: var(--castano); margin-right: .08em; }
+.a2__kicker, .a2__caption, .a2__date, .a2 .op__cta { font: 500 .7rem/1.5 var(--sans); letter-spacing: .26em; text-transform: uppercase; }
+.a2__kicker { color: var(--oliva); left: var(--gutter); top: calc(env(safe-area-inset-top) + 1.6rem); }
+.a2__caption, .a2__date { color: var(--tinta); letter-spacing: .2em; }
+.a2__caption { text-align: right; display: none; }
+.a2__date { display: block; margin-top: 1.4rem; }
+.a2__title { left: var(--gutter); top: 47svh; }
+.a2 .op__cta { color: var(--oliva); right: var(--gutter); bottom: calc(env(safe-area-inset-bottom) + 1.9rem); }
+.a2__caption, .a2 .op__cta { animation: a2-rise .7s var(--ease-out) .55s backwards; }
+@media (orientation: landscape) {
+  .a2 { --mat: 14px; }
+  .a2__slot { right: 6vw; top: 54%; translate: 0 -50%; width: 50vw; aspect-ratio: var(--ar, 1.75); }
+  .a2__vellum { width: 52vw; }
+  .a2__kicker { top: 2.6rem; }
+  .a2__title { top: auto; bottom: 22vh; }
+  .a2__names { font-size: clamp(4rem, min(8.6vw, 17vh), 9.5rem); }
+  .a2__date { display: none; }
+  .a2__caption { display: block; }
+  .a2__second { left: auto; right: 3.5vw; top: 8vh; width: 9.5vw; }
+  .a2 .op__cta { right: 7vw; bottom: 2.4rem; }
+}
+@media (orientation: landscape) and (max-height: 500px) {
+  .a2__kicker { top: 1.2rem; }
+  .a2__title { bottom: 18vh; }
+  .a2__second, .a2__caption { display: none; }
+  .a2 .op__cta { bottom: 1.2rem; }
+}
+.a2.is-opening .a2__vellum { animation: none; transform: perspective(1600px) rotateY(-150deg); opacity: 0;
+  transition: transform .8s var(--ease-cine), opacity .2s linear .5s; }
+.a2.is-opening :is(.a2__kicker, .a2__caption, .op__cta) { animation: none; opacity: 0; transition: opacity .3s var(--ease-out); }
+.a2.is-playing .a2__print { animation: none; opacity: 1; transform: none; transition: transform 1s var(--ease-in-out) .38s; }
+.a2.is-playing .a2__print::before { opacity: 0; transition: opacity .6s var(--ease-out) .6s; }
+.a2.is-playing .a2__second { animation: none; opacity: 0; transform: translateY(14px); transition: opacity .45s var(--ease-out) .3s, transform .6s var(--ease-out) .3s; }
+.a2.is-playing .a2__page { opacity: 0; transition: opacity .35s var(--ease-out) 1.08s; }
+@keyframes a2-lay { from { opacity: 0; translate: 0 10px; } }
+@keyframes a2-slide { from { transform: translateX(-3%); opacity: 0; } }
+@keyframes a2-rise { from { opacity: 0; transform: translateY(6px); } }
+
+/* Movimiento reducido: sin cámara ni desplazamientos; fundidos de opacidad */
+@media (prefers-reduced-motion: reduce) {
+  .a1__close img, .a1__names, .a1__kicker, .a1__date, .a1 .op__cta,
+  .a2.is-fit .a2__print, .a2__second, .a2__vellum, .a2__caption, .a2 .op__cta { animation: op-fade .4s ease-out backwards; }
+  .a1.is-opening :is(.a1__kicker, .a1__names, .a1__date, .op__cta) { transform: none; }
+  .a1__wide { transform: none; opacity: 1; }
+  .a1.is-playing .a1__close img { transform: none; transition: opacity .45s ease-out; }
+  .a2.is-opening .a2__vellum { transform: none; transition: opacity .35s ease-out; }
+  .a2.is-playing .a2__print { transform: translate(var(--dx), var(--dy)) scale(var(--s)); opacity: 0; transition: opacity .45s ease-out .1s; }
+  .a2.is-playing .a2__second { transform: none; }
+  .a2.is-playing .a2__page { transition: opacity .45s ease-out .1s; }
+  @keyframes op-fade { from { opacity: 0; } }
+}

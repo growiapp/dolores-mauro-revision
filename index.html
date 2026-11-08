@@ -2,14 +2,16 @@
 <html lang="es-AR">
 <head>
   <meta charset="utf-8">
+  <script>if (!new URLSearchParams(location.search).has("invitacion")) location.replace("revision-aperturas.html");</script>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <!-- Preproducción: quitar noindex al publicar -->
   <meta name="robots" content="noindex, nofollow">
   <title>Dolores & Mauro · 3 de abril de 2027</title>
-  <meta name="description" content="Sábado 3 de abril de 2027 · Purmamarca y Volcán, Jujuy.">
+  <!-- Archivo común a los dos enlaces: nada exclusivo de una modalidad (ni en el texto ni en los comentarios) -->
+  <meta name="description" content="¡Nos casamos! Sábado 3 de abril de 2027 · Volcán, Jujuy.">
   <!-- Vista previa al compartir. Al publicar, og:image y og:url pasan a URLs absolutas del dominio final. -->
   <meta property="og:title" content="Dolores & Mauro">
-  <meta property="og:description" content="Sábado 3 de abril de 2027 · Purmamarca y Volcán, Jujuy">
+  <meta property="og:description" content="¡Nos casamos! Sábado 3 de abril de 2027 · Volcán, Jujuy">
   <meta property="og:image" content="public/img/og-132.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -22,55 +24,119 @@
   <link rel="preload" as="image" href="public/img/132-1280.webp" imagesrcset="public/img/132-1280.webp 1280w, public/img/132-2000.webp 2000w, public/img/132-3000.webp 3000w" imagesizes="(max-width: 767px) and (orientation: portrait) 200vw, 100vw" fetchpriority="high">
   <link rel="preload" href="public/fonts/fraunces-latin-full-normal.woff2" as="font" type="font/woff2" crossorigin>
   <!-- Modo revisión (?revision): vista para la pareja, con una aclaración general y datos de ejemplo. La vista pública no los muestra.
-       Los datos pendientes están en deliverables/revision-fa-studio/pendientes.md -->
+       Los datos pendientes están en deliverables/evolucion-v2/pendientes.md -->
   <script>if (new URLSearchParams(location.search).has("revision")) document.documentElement.classList.add("review");</script>
-  <link rel="stylesheet" href="styles.css?v=20261019d">
+  <link rel="stylesheet" href="styles.css?v=20261108b">
+  <link rel="stylesheet" href="aperturas.css?v=20261109a"> <!-- revisión de aperturas (?apertura=a1|a2) -->
 </head>
 <body>
-  <!-- Apertura: sobre con sello en cada visita (sin recordar nada). Esc o el botón abren; sin JS no aparece -->
-  <dialog class="opening" aria-label="Invitación de Dolores y Mauro" tabindex="-1">
+  <!-- Apertura en cada visita (sin recordar nada: ni localStorage ni sessionStorage): portada editorial sobre papel con una
+       ventana troquelada en arco hacia la foto de la portada. Al abrir, el texto se levanta y la ventana se agranda hasta ser
+       la portada (la misma foto, el mismo encuadre): la invitación se abre hacia la foto.
+       Se saltea con un enlace directo a una sección (#confirmar, #mensajes…) y con ?apertura=no. Sin JS no aparece.
+       Diseño y tiempos: deliverables/evolucion-v2/aperturas.md -->
+  <dialog class="opening" aria-label="Invitación de Dolores y Mauro">
     <button class="opening__open" type="button">
-      <span class="envelope" aria-hidden="true">
-        <!-- Papel: interior (se ve al abrir), laterales con luz desde arriba a la izquierda y bolsillo inferior -->
-        <svg class="envelope__folds" viewBox="0 0 142 100" preserveAspectRatio="none">
-          <defs>
-            <linearGradient id="env-inside" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color: var(--tinta); stop-opacity: .2" /><stop offset="1" style="stop-color: var(--tinta); stop-opacity: .06" /></linearGradient>
-            <linearGradient id="env-side-l" x1="0" x2="1"><stop offset="0" style="stop-color: var(--tinta); stop-opacity: .02" /><stop offset="1" style="stop-color: var(--tinta); stop-opacity: .055" /></linearGradient>
-            <linearGradient id="env-side-r" x1="0" x2="1"><stop offset="0" style="stop-color: var(--tinta); stop-opacity: .07" /><stop offset="1" style="stop-color: var(--tinta); stop-opacity: .03" /></linearGradient>
-            <linearGradient id="env-pocket" x1="0" y1="1" x2="0" y2="0"><stop offset="0" style="stop-color: var(--papel)" /><stop offset="1" style="stop-color: var(--marfil)" /></linearGradient>
-          </defs>
-          <path d="M0 0 L71 52 L142 0 Z" fill="url(#env-inside)" />
-          <path d="M0 0 L71 52 L0 100 Z" fill="url(#env-side-l)" />
-          <path d="M142 0 L71 52 L142 100 Z" fill="url(#env-side-r)" />
-          <path class="envelope__pocket-shade" d="M0 99 L71 51 L142 99" />
-          <path d="M0 100 L71 52 L142 100 Z" fill="url(#env-pocket)" />
-          <path class="envelope__crease" d="M0 100 L71 52 L142 100" />
-        </svg>
-        <span class="envelope__flap-shadow"></span>
-        <!-- Solapa en 3D: cara exterior e interior; el sello va en su punta y se levanta con ella -->
-        <span class="envelope__flap">
-          <span class="envelope__face envelope__face--out"></span>
-          <span class="envelope__face envelope__face--in"></span>
-          <span class="envelope__seal"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="39" /></svg><span>D</span><i></i><span>M</span></span>
-        </span>
+      <span class="ed__photo" aria-hidden="true">
+        <img src="public/img/132-1280.webp" srcset="public/img/132-1280.webp 1280w, public/img/132-2000.webp 2000w, public/img/132-3000.webp 3000w"
+             sizes="(max-width: 767px) and (orientation: portrait) 200vw, 100vw" width="1280" height="853" alt="" decoding="async">
+        <span class="ed__wash"></span>
       </span>
+      <span class="ed__kicker" aria-hidden="true">Nos casamos</span>
+      <span class="ed__names" aria-hidden="true">Dolores <span class="script">y</span> Mauro</span>
+      <span class="ed__date" aria-hidden="true">Sábado 3 de abril de 2027 · Volcán, Jujuy</span>
+      <span class="ed__window" aria-hidden="true"></span>
       <span class="opening__cta">Abrir invitación</span>
     </button>
   </dialog>
   <script>{ const d = document.currentScript.previousElementSibling, root = document.documentElement;
-    if (!d.showModal) d.remove(); else {
-      root.classList.add("sealed"); d.showModal(); d.focus(); // foco en el diálogo: sin anillo sobre el botón al cargar; Tab llega al botón
-      // El hero arranca su entrada cuando el sobre empieza a fundirse. Respaldos contra quedar trabado: si el fundido no arranca
-      // (sin transiciones) o no termina; medidos desde su inicio para no cortarlo en un equipo lento
+    // Secciones comunes a los dos enlaces: un enlace directo a una de ellas entra sin apertura y respeta el destino
+    const direct = ["el-dia", "detalles", "nosotros", "confirmar", "mensajes", "playlist"].includes(decodeURIComponent(location.hash.slice(1)));
+    const ap = new URLSearchParams(location.search).get("apertura"), skip = !d.showModal || direct || ap === "no";
+    // Revisión de aperturas: ?apertura=a1|a2 reemplaza esta por una de las propuestas (aperturas.js); la modalidad no cambia
+    if (!skip && (ap === "a1" || ap === "a2")) { d.remove(); root.dataset.apertura = ap; } else if (skip) d.remove(); else {
+      // La apertura se abre hacia la portada: la página tiene que estar arriba (al recargar, el navegador restauraba el scroll)
+      if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+      root.classList.add("sealed", "photo-led");
+      const btn = d.querySelector("button"), ph = d.querySelector(".ed__photo"), win = d.querySelector(".ed__window"), cta = d.querySelector(".opening__cta");
+      d.showModal(); btn.focus({ preventScroll: true }); // foco en el botón real: Enter y Espacio abren como en cualquier botón
+      // La foto del diálogo ocupa exactamente la caja de la portada (mismo archivo y encuadre) y se recorta a la ventana del papel
+      const fit = () => {
+        const hero = document.querySelector(".hero");
+        if (!hero || d.classList.contains("is-opening")) return;
+        if (scrollY) scrollTo(0, 0);
+        let h = hero.getBoundingClientRect();
+        // La ventana termina donde termina la portada; debajo, la franja del llamado (al menos su alto y aire).
+        // Celular en horizontal: la pareja está al pie de la foto; la ventana llega al borde y el llamado va al margen
+        const flat = matchMedia("(orientation: landscape) and (max-height: 500px)").matches;
+        btn.style.setProperty("--below", `${flat ? 0 : Math.max(innerHeight - h.bottom, cta.offsetHeight + 48)}px`);
+        h = hero.getBoundingClientRect();
+        const w = win.getBoundingClientRect();
+        ph.style.cssText = `top: ${h.top}px; height: ${h.height}px; --wt: ${w.top - h.top}px; --wr: ${h.right - w.right}px; --wb: ${h.bottom - w.bottom}px; --wl: ${w.left - h.left}px; --wa: ${w.width / 2}px`;
+        d.classList.add("is-fit");
+      };
+      addEventListener("DOMContentLoaded", fit); addEventListener("resize", fit); document.fonts?.ready.then(fit);
+      // El hero arranca su entrada cuando la apertura empieza a desvanecerse. Respaldos contra quedar trabado: si la transición
+      // no arranca (sin transiciones) o no termina; medidos desde su inicio para no cortarla en un equipo lento
       let started = false;
-      const reveal = () => root.classList.remove("sealed"), finish = () => { reveal(); if (d.isConnected) { d.close(); d.remove(); } };
-      const open = () => { if (d.classList.contains("is-opening")) return; d.classList.add("is-opening"); setTimeout(() => started || finish(), 1500); };
-      d.addEventListener("transitionstart", (e) => { if (e.target !== d || started) return; started = true; reveal(); setTimeout(finish, 1500); });
+      const reveal = () => root.classList.remove("sealed");
+      const finish = () => {
+        reveal();
+        if (!d.isConnected) return;
+        d.close(); d.remove();
+        document.querySelector(".hero__names")?.focus({ preventScroll: true }); // el foco sigue a la portada, sin mover la página
+      };
+      const open = () => { if (d.classList.contains("is-opening")) return; fit(); d.classList.add("is-opening"); setTimeout(() => started || finish(), 1600); };
+      d.addEventListener("transitionstart", (e) => { if (e.target !== d || started) return; started = true; reveal(); setTimeout(finish, 1200); });
       d.addEventListener("transitionend", (e) => e.target === d && e.propertyName === "opacity" && finish());
-      d.querySelector("button").addEventListener("click", open);
-      d.addEventListener("touchstart", () => {}, { passive: true }); // iOS: sin un manejador táctil, Safari no aplica :active (el sello no se hundiría)
+      btn.addEventListener("click", open);
+      d.addEventListener("touchstart", () => {}, { passive: true }); // iOS: sin un manejador táctil, Safari no aplica :active
       d.addEventListener("cancel", (e) => { e.preventDefault(); open(); });
     } }</script>
+  <!-- Propuestas de apertura en revisión (A1 y A2), con ?apertura=a1|a2. Las monta aperturas.js; estilos en aperturas.css.
+       Al elegir una, se queda la suya y se borran la otra y la plantilla sobrante -->
+  <template id="apertura-a1">
+    <dialog class="op a1" aria-label="Invitación de Dolores y Mauro">
+      <button class="op__btn" type="button">
+        <span class="a1__wide" aria-hidden="true">
+          <img src="public/img/132-1280.webp" srcset="public/img/132-1280.webp 1280w, public/img/132-2000.webp 2000w, public/img/132-3000.webp 3000w"
+               sizes="(max-width: 767px) and (orientation: portrait) 200vw, 100vw" width="1280" height="853" alt="" decoding="async">
+        </span>
+        <span class="a1__close" aria-hidden="true">
+          <picture>
+            <source media="(orientation: portrait)" srcset="public/img/158-640.webp 640w, public/img/158-1333.webp 1333w" sizes="100vw">
+            <img src="public/img/149-2000.webp" srcset="public/img/149-1000.webp 1000w, public/img/149-2000.webp 2000w" sizes="100vw" alt="">
+          </picture>
+        </span>
+        <span class="a1__scrim" aria-hidden="true"></span>
+        <span class="a1__kicker" aria-hidden="true">Nos casamos</span>
+        <span class="a1__names" aria-hidden="true"><span>Dolores</span><span><span class="script">y</span>Mauro</span></span>
+        <span class="a1__date" aria-hidden="true">Sábado 3 de abril de 2027 · Volcán, Jujuy</span>
+        <span class="op__cta">Abrir invitación</span>
+      </button>
+    </dialog>
+  </template>
+  <template id="apertura-a2">
+    <dialog class="op a2" aria-label="Invitación de Dolores y Mauro">
+      <button class="op__btn" type="button">
+        <span class="a2__page" aria-hidden="true"></span>
+        <span class="a2__slot" aria-hidden="true"></span>
+        <span class="a2__second" aria-hidden="true"><img src="public/img/139-640.webp" alt=""></span>
+        <span class="a2__print" aria-hidden="true">
+          <img src="public/img/132-1280.webp" srcset="public/img/132-1280.webp 1280w, public/img/132-2000.webp 2000w, public/img/132-3000.webp 3000w"
+               sizes="(max-width: 767px) and (orientation: portrait) 200vw, 100vw" width="1280" height="853" alt="" decoding="async">
+        </span>
+        <span class="a2__caption" aria-hidden="true">Sábado 3 de abril de 2027<br>Volcán, Jujuy</span>
+        <span class="a2__vellum" aria-hidden="true">
+          <span class="a2__kicker">Nos casamos</span>
+          <span class="a2__title"><span class="a2__names"><span>Dolores</span><span><span class="script">y</span>Mauro</span></span>
+            <span class="a2__date">Sábado 3 de abril de 2027<br>Volcán, Jujuy</span></span>
+        </span>
+        <span class="op__cta">Abrir invitación</span>
+      </button>
+    </dialog>
+  </template>
+  <script src="aperturas.js?v=20261109a"></script>
   <a class="skip" href="#el-dia">Ir a horarios y lugares</a>
   <p class="review-bar" data-pending>Esta es una primera vista previa de su invitación. Algunos contenidos se completarán más adelante. Los formularios son de muestra y no registran respuestas.</p>
   <!-- Alto de la barra de revisión (0 en la vista pública): el hero móvil lo descuenta para que la banda entre en la pantalla -->
@@ -85,124 +151,102 @@
            alt="Dolores y Mauro caminan de espaldas, de la mano, con el caballo, por un campo abierto hacia el monte">
     </picture>
     <div class="hero__text">
-      <h1 class="hero__names">Dolores <span class="script" aria-hidden="true">y</span><span class="sr-only">y</span> Mauro</h1>
+      <h1 class="hero__names" tabindex="-1">Dolores <span class="script" aria-hidden="true">y</span><span class="sr-only">y</span> Mauro</h1>
       <p class="datelock datelock--sky" aria-label="Sábado 3 de abril de 2027">
         <span>Sábado</span><time datetime="2027-04-03">3</time><span>Abril 2027</span>
       </p>
     </div>
   </header>
 
-  <!-- Banda de datos: lo esencial en el primer vistazo -->
+  <!-- Banda de datos: los primeros horarios y la cuenta regresiva de la modalidad (los pinta main.js) -->
   <div class="band">
-    <ul class="when" aria-label="Ceremonias confirmadas">
-      <li><time datetime="2027-04-03T11:00-03:00">11:00</time> <span>Iglesia · Purmamarca</span></li>
-      <li><time datetime="2027-04-03T13:00-03:00">13:00</time> <span>Civil · Finca Los Churquis, Volcán</span></li>
-    </ul>
-    <p class="countdown" role="timer" aria-label="Cuenta regresiva hasta la ceremonia del 3 de abril de 2027 a las 11:00">
-      <span class="countdown__label">Faltan</span>
-      <span class="countdown__unit"><span data-cd="d">—</span> días</span>
-      <span class="countdown__unit"><span data-cd="h">—</span> h</span>
-      <span class="countdown__unit"><span data-cd="m">—</span> min</span>
-    </p>
+    <ul class="when" aria-label="Horarios" data-slot="band"></ul>
+    <p class="countdown" role="timer"><span class="countdown__label">Faltan</span> <span data-cd="d">—</span> <span data-cd="u">días</span></p>
   </div>
 
   <main>
-    <section class="invite" aria-label="Invitación">
-      <p class="invite__line">Te invitamos a celebrar nuestro casamiento</p>
+    <section class="invite" aria-label="Invitación" data-reveal>
+      <span class="rule-v" aria-hidden="true"></span>
+      <p class="invite__kicker">¡Nos casamos!</p>
+      <p class="invite__line fx">Y queremos que seas parte de este día</p>
     </section>
 
-    <!-- Historia: solo texto, sin fotos (para eso está la galería). Oculta en la vista pública hasta tener el texto:
+    <!-- Historia: solo texto, sin fotos (para eso está «Nosotros»). Oculta en la vista pública hasta tener el texto:
          al recibirlo, quitar data-pending de la sección y del bloque de palabras -->
     <section class="portrait" aria-labelledby="portrait-title" data-pending>
-      <h2 id="portrait-title" class="caps-title">Dolores <span class="script">y</span> Mauro</h2>
+      <h2 id="portrait-title" class="display">Dolores <span class="script">y</span> Mauro</h2>
 
       <div class="portrait__words" data-pending>
         <p class="tbd tbd--block">Acá va su historia, contada con sus palabras.</p>
       </div>
     </section>
 
+    <!-- Cronograma: lo pinta main.js con el módulo de la modalidad del enlace (modalidades/*.js) -->
     <section id="el-dia" class="day" aria-labelledby="day-title">
-      <header class="day__head">
-        <h2 id="day-title">El día</h2>
-        <p class="day__sub">Sábado 3 de abril de 2027 · dos ceremonias, dos pueblos</p>
+      <header class="head" data-reveal>
+        <p class="eyebrow">Sábado 3 de abril de 2027</p>
+        <h2 id="day-title" class="display">El día</h2>
       </header>
-
-      <ol class="towns">
-        <li class="town">
-          <time class="town__time" datetime="2027-04-03T11:00-03:00">11:00</time>
-          <p class="town__name">Purmamarca</p>
-          <h3>Ceremonia religiosa</h3>
-          <p>Iglesia de Purmamarca</p>
-        </li>
-        <li class="route" aria-hidden="true"><span></span></li>
-        <li class="town">
-          <time class="town__time" datetime="2027-04-03T13:00-03:00">13:00</time>
-          <p class="town__name">Volcán</p>
-          <h3>Ceremonia civil</h3>
-          <p>Finca Los Churquis</p>
-        </li>
-      </ol>
-
-      <div class="day__more" data-pending data-later>
-        <p><strong>Celebración</strong> <span class="tbd">Pendiente: horario y lugar</span></p>
-      </div>
-
-      <div class="day__cal">
-        <a class="btn btn--line" href="public/casamiento-dolores-mauro.ics" download>Agregar al calendario</a>
-        <p class="note">Agenda las dos ceremonias con su hora de inicio.</p>
+      <ol class="timeline" data-slot="timeline"></ol>
+      <p class="day__nolink note" data-slot="nomod" hidden>Para ver los horarios, abrí la invitación desde el enlace que te enviaron.</p>
+      <div class="day__cal" data-slot="cal" hidden>
+        <a class="btn btn--line" href="#" download>Agregar al calendario</a>
+        <p class="note">Agendá el día con sus horarios y lugares.</p>
       </div>
     </section>
 
-    <!-- Dress code y regalos: diseñados, ocultos en la vista pública hasta tener textos reales -->
-    <section id="detalles" class="details" aria-labelledby="details-title" data-pending data-later>
-      <h2 id="details-title" class="caps-title">Para tener en cuenta</h2>
-      <div class="details__grid">
-        <article class="detail">
-          <span class="seal seal--small" aria-hidden="true"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="48" /></svg><span>D</span><i></i><span>M</span></span>
-          <h3>Dress code</h3>
-          <p class="tbd">Pendiente: lo definen Dolores y Mauro. No sugerimos nada hasta tenerlo.</p>
-        </article>
-        <article class="detail">
-          <span class="seal seal--small" aria-hidden="true"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="48" /></svg><span>D</span><i></i><span>M</span></span>
-          <h3>Regalos</h3>
-          <p class="tbd">Pendiente: texto y datos (alias, CBU o lista). No se publican datos bancarios sin confirmación escrita.</p>
-        </article>
+    <section id="detalles" class="details" aria-labelledby="details-title">
+      <div class="head" data-reveal>
+        <h2 id="details-title" class="eyebrow">Dress code</h2>
+        <p class="display">Elegante sport</p>
+        <p class="detail__text fx">Algo lindo y cómodo para disfrutar el día de principio a fin.</p>
       </div>
     </section>
 
-    <section id="galeria" class="gallery" aria-labelledby="gallery-title">
-      <h2 id="gallery-title" class="caps-title">Galería</h2>
+    <!-- Sección propia de cada modalidad: su título y su texto vienen del módulo del enlace -->
+    <section class="contribution" data-slot="extra" hidden></section>
+
+    <section id="nosotros" class="gallery" aria-labelledby="gallery-title">
+      <header class="head" data-reveal>
+        <p class="eyebrow">Dolores y Mauro</p>
+        <h2 id="gallery-title" class="display">Nosotros <svg class="gallery__heart" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 20s-7.4-4.5-9-9.2C1.9 7.6 3.8 4.6 6.9 4.3c2-.2 3.7.9 4.6 2.6l.5.9.5-.9c.9-1.7 2.6-2.8 4.6-2.6 3.1.3 5 3.3 3.9 6.5C19.4 15.5 12 20 12 20z"/></svg></h2>
+      </header>
+      <!-- Fotos elegidas por Dolores y Mauro (la 132 es la portada). Horizontal y vertical alternadas, de a cuatro -->
       <div class="gallery__grid">
-        <a class="gallery__item gallery__item--h" href="public/img/099-2000.webp" data-reveal>
-          <img src="public/img/099-1000.webp" width="1000" height="667" loading="lazy" decoding="async"
-               alt="Dolores abraza a Mauro y le da un beso en la mejilla; él sonríe con los ojos cerrados, junto a la laguna">
+        <a class="gallery__item gallery__item--h" href="public/img/013-2000.webp" data-reveal>
+          <img src="public/img/013-1000.webp" width="1000" height="667" loading="lazy" decoding="async"
+               alt="Frente a la laguna, Dolores apoya las manos en el pecho de Mauro y se miran sonriendo">
         </a>
-        <a class="gallery__item gallery__item--v" href="public/img/029-1333.webp" data-reveal>
-          <img src="public/img/029-640.webp" width="640" height="960" loading="lazy" decoding="async"
-               alt="Mauro inclina a Dolores en un paso de baile, frente a la laguna">
+        <a class="gallery__item gallery__item--v" href="public/img/028-1333.webp" data-reveal>
+          <img src="public/img/028-640.webp" width="640" height="960" loading="lazy" decoding="async"
+               alt="Mauro levanta a Dolores en un abrazo junto a la laguna; ella se ríe">
         </a>
-        <a class="gallery__item gallery__item--v" href="public/img/105-1333.webp" data-reveal>
-          <img src="public/img/105-640.webp" width="640" height="960" loading="lazy" decoding="async"
-               alt="Dolores se ríe a carcajadas, abrazada a Mauro">
+        <a class="gallery__item gallery__item--v" href="public/img/085-1333.webp" data-reveal>
+          <img src="public/img/085-640.webp" width="640" height="960" loading="lazy" decoding="async"
+               alt="Bajo un árbol, junto a la laguna, Dolores y Mauro con sus perros">
         </a>
-        <a class="gallery__item gallery__item--h" href="public/img/014-1600.webp" data-reveal>
-          <img src="public/img/014-1000.webp" width="1000" height="667" loading="lazy" decoding="async"
-               alt="Frente con frente, junto a la laguna con flores blancas">
+        <a class="gallery__item gallery__item--h" href="public/img/037-2000.webp" data-reveal>
+          <img src="public/img/037-1000.webp" width="1000" height="667" loading="lazy" decoding="async"
+               alt="Corren de la mano por el pasto, riéndose, con la laguna detrás">
+        </a>
+        <a class="gallery__item gallery__item--h" href="public/img/119-2000.webp" data-reveal>
+          <img src="public/img/119-1000.webp" width="1000" height="667" loading="lazy" decoding="async"
+               alt="Dolores, con sombrero, acaricia al caballo junto a Mauro">
+        </a>
+        <a class="gallery__item gallery__item--v" href="public/img/139-1333.webp" data-reveal>
+          <img src="public/img/139-640.webp" width="640" height="960" loading="lazy" decoding="async"
+               alt="La mano de Dolores, con el anillo, apoyada en el caballo">
         </a>
         <a class="gallery__item gallery__item--v" href="public/img/143-1333.webp" data-reveal>
           <img src="public/img/143-640.webp" width="640" height="960" loading="lazy" decoding="async"
                alt="Caminan hacia la cámara con el caballo en el medio">
         </a>
-        <a class="gallery__item gallery__item--v" href="public/img/158-1333.webp" data-reveal>
-          <img src="public/img/158-640.webp" width="640" height="960" loading="lazy" decoding="async"
-               alt="Dolores con sombrero y Mauro con boina, en el campo">
-        </a>
-        <a class="gallery__item gallery__item--h" href="public/img/150-2000.webp" data-reveal>
-          <img src="public/img/150-1000.webp" width="1000" height="667" loading="lazy" decoding="async"
-               alt="Mauro sonríe apoyado en el caballo; en primer plano, el sombrero de Dolores">
+        <a class="gallery__item gallery__item--h" href="public/img/149-2000.webp" data-reveal>
+          <img src="public/img/149-1000.webp" width="1000" height="667" loading="lazy" decoding="async"
+               alt="Mauro, con boina, sonríe apoyado en el caballo junto a Dolores, con sombrero">
         </a>
       </div>
-      <dialog class="lightbox" aria-label="Galería ampliada">
+      <dialog class="lightbox" aria-label="Fotos ampliadas">
         <button class="lightbox__btn lightbox__close" type="button" aria-label="Cerrar" autofocus>×</button>
         <figure><img src="data:," alt="" draggable="false"><figcaption hidden></figcaption></figure>
         <p class="lightbox__count" aria-live="polite"></p>
@@ -211,68 +255,62 @@
       </dialog>
     </section>
 
-    <!-- Sección especial Integral: información útil. Configurable si la pareja prefiere historia o cronología -->
+    <!-- Información útil: pendiente. TRASLADOS: punto de extensión documentado en deliverables/evolucion-v2/README.md;
+         no se agregan campos ni horarios hasta que Dolores y Mauro definan la logística -->
     <section id="info" class="info" aria-labelledby="info-title" data-pending data-later>
-      <h2 id="info-title">Purmamarca y Volcán</h2>
+      <h2 id="info-title">Cómo llegar</h2>
       <p class="info__sub">Información útil para invitados</p>
       <div class="info__grid">
-        <article><h3>Traslado</h3><p class="tbd">Pendiente: cómo moverse entre la iglesia (11:00) y la finca (13:00). No publicamos recorridos ni tiempos sin confirmar.</p></article>
+        <article><h3>Traslado</h3><p class="tbd">Pendiente: Dolores y Mauro están definiendo si habrá traslado. No publicamos recorridos ni horarios sin confirmar.</p></article>
         <article><h3>Alojamiento</h3><p class="tbd">Pendiente: recomendaciones de los anfitriones, si las hay.</p></article>
-        <article><h3>Cómo llegar</h3><p class="tbd">Pendiente: indicaciones y links verificados.</p></article>
+        <article><h3>Indicaciones</h3><p class="tbd">Pendiente: indicaciones y links verificados.</p></article>
       </div>
     </section>
 
     <section id="confirmar" class="rsvp" aria-labelledby="rsvp-title">
-      <h2 id="rsvp-title">Confirmá tu asistencia</h2>
+      <header class="head" data-reveal>
+        <p class="eyebrow">R.S.V.P.</p>
+        <h2 id="rsvp-title" class="display">Confirmá tu asistencia</h2>
+        <p class="rsvp__sub fx">Una sola respuesta por familia o grupo.</p>
+      </header>
 
       <form id="rsvp-form" class="form" novalidate aria-labelledby="rsvp-title">
         <fieldset class="form__body" disabled>
           <p class="demo-note" hidden><strong>Demostración.</strong> Este formulario todavía no guarda ni envía respuestas.</p>
           <noscript><p class="note">Para confirmar necesitás tener JavaScript activado.</p></noscript>
 
+          <div class="field" data-field="group">
+            <label for="r-group">Familia o grupo</label>
+            <input id="r-group" name="group" maxlength="80" required aria-describedby="r-group-hint r-group-err">
+            <p class="field__hint" id="r-group-hint">Por ejemplo: Familia Pérez, o los nombres de quienes vienen juntos.</p>
+            <p class="field__err" id="r-group-err"></p>
+          </div>
+
           <div class="field" data-field="name">
-            <label for="r-name">Nombre y apellido</label>
+            <label for="r-name">Tu nombre y apellido</label>
             <input id="r-name" name="name" autocomplete="name" maxlength="80" required aria-describedby="r-name-err">
             <p class="field__err" id="r-name-err"></p>
           </div>
 
           <fieldset class="field choice" data-field="attending" aria-describedby="r-att-err">
-            <legend>¿Vas a poder venir?</legend>
-            <label><input type="radio" name="attending" value="si" required> Sí, ahí estaré</label>
-            <label><input type="radio" name="attending" value="no"> No voy a poder</label>
+            <legend>¿Van a poder venir?</legend>
+            <label><input type="radio" name="attending" value="si" required> Sí, ahí estaremos</label>
+            <label><input type="radio" name="attending" value="no"> No vamos a poder</label>
             <p class="field__err" id="r-att-err"></p>
           </fieldset>
 
-          <div class="if-yes" hidden>
-            <div class="field" data-field="people">
-              <label for="r-people">¿Cuántas personas confirman, contándote?</label>
-              <input id="r-people" name="people" type="number" inputmode="numeric" min="1" value="1" aria-describedby="r-people-err">
-              <p class="field__err" id="r-people-err"></p>
+          <!-- Personas: filas planas separadas por filetes (sin cajas dentro de la caja del formulario). La primera arranca con el nombre
+               de quien completa y lo sigue mientras no la editen -->
+          <fieldset class="field members" data-field="members" aria-describedby="r-members-hint r-members-count r-members-err" hidden>
+            <legend>¿Quiénes van a venir?</legend>
+            <p class="field__hint" id="r-members-hint">Incluite si venís.</p>
+            <ol class="members__list"></ol>
+            <div class="members__foot">
+              <button class="members__add" type="button"><span aria-hidden="true">+</span> Agregar persona</button>
+              <p class="members__count" id="r-members-count" aria-live="polite"></p>
             </div>
-            <div class="field" data-field="companions">
-              <label for="r-comp">Nombres de quienes vienen con vos <span class="opt">(opcional)</span></label>
-              <textarea id="r-comp" name="companions" rows="2" maxlength="300"></textarea>
-              <p class="field__err"></p>
-            </div>
-            <fieldset class="field choice choice--wrap" data-field="diet">
-              <legend>Restricciones alimentarias <span class="opt">(opcional)</span></legend>
-              <label><input type="checkbox" name="diet" value="vegetariano"> Vegetariano</label>
-              <label><input type="checkbox" name="diet" value="vegano"> Vegano</label>
-              <label><input type="checkbox" name="diet" value="sin-tacc"> Sin TACC (celíaco)</label>
-              <label><input type="checkbox" name="diet" value="otra" id="r-diet-otra"> Otra</label>
-              <p class="field__err"></p>
-            </fieldset>
-            <div class="field" data-field="diet_notes" hidden>
-              <label for="r-diet-notes">¿Cuál?</label>
-              <input id="r-diet-notes" name="diet_notes" maxlength="200" aria-describedby="r-diet-err">
-              <p class="field__err" id="r-diet-err"></p>
-            </div>
-            <div class="field field--check" data-field="show_name">
-              <label><input type="checkbox" name="show_name"> Quiero que mi nombre aparezca en la lista de confirmados de esta página</label>
-              <p class="field__hint">Es opcional. Sin tu permiso, solo sumás al contador.</p>
-              <p class="field__err"></p>
-            </div>
-          </div>
+            <p class="field__err" id="r-members-err"></p>
+          </fieldset>
 
           <div class="hp" aria-hidden="true"><label>No completar <input name="website" tabindex="-1" autocomplete="off"></label></div>
 
@@ -284,20 +322,57 @@
         <p class="form__done-text"></p>
         <button class="btn btn--line form__again" type="button">Enviar otra respuesta</button>
       </div>
+      <template id="member-row">
+        <li class="member">
+          <div class="member__head"><span class="member__n" aria-hidden="true">Persona 1</span><button class="member__remove" type="button">Quitar</button></div>
+          <div class="field member__name" data-field="members.0.name">
+            <label>Nombre y apellido<span class="sr-only member__who">, persona 1</span></label>
+            <input name="member-name" maxlength="80" autocomplete="off">
+            <p class="field__err"></p>
+          </div>
+          <div class="field member__diet" data-field="members.0.diet">
+            <label>Restricción alimentaria<span class="sr-only member__who">, persona 1</span></label>
+            <select name="member-diet">
+              <option value="">Ninguna</option>
+              <option value="vegetariano">Vegetariano</option>
+              <option value="vegano">Vegano</option>
+              <option value="sin-tacc">Sin TACC (celíaco)</option>
+              <option value="otra">Otra</option>
+            </select>
+          </div>
+          <div class="field member__notes" data-field="members.0.diet_notes" hidden>
+            <label>¿Cuál?<span class="sr-only member__who">, persona 1</span></label>
+            <input name="member-notes" maxlength="120" autocomplete="off">
+            <p class="field__err"></p>
+          </div>
+        </li>
+      </template>
+    </section>
 
-      <!-- Confirmados visibles: contador agregado + nombres solo con consentimiento individual -->
-      <div class="attendance" aria-live="polite">
-        <p class="attendance__count"><span data-count>—</span> <span class="attendance__label">personas confirmaron su asistencia</span></p>
-        <p class="attendance__empty" hidden>Todavía no hay confirmaciones. ¡Podés ser de las primeras personas en confirmar!</p>
-        <ul class="attendance__names" aria-label="Confirmados que aceptaron mostrar su nombre" hidden></ul>
-        <p class="attendance__error">No pudimos cargar los confirmados en este momento.</p>
-        <p class="demo-note" hidden>Demostración: el contador es solo de muestra.</p>
+    <!-- Playlist del casamiento: los invitados suman canciones en la plataforma, no en el formulario. Dos enlaces separados en
+         config.js (music.listenUrl y music.collaborateUrl, este con su vencimiento). Sin ninguno vigente, la sección no aparece
+         en la vista pública; main.js decide textos y botones según lo que haya -->
+    <section id="playlist" class="playlist" aria-labelledby="playlist-title" data-pending>
+      <div class="head" data-reveal>
+        <span class="playlist__icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M9 18.5V5.2l10-2v12.6"/><circle cx="6.8" cy="18.5" r="2.3"/><circle cx="16.8" cy="15.8" r="2.3"/><path d="M9 9.2l10-2"/></svg></span>
+        <p class="eyebrow">Playlist</p>
+        <h2 id="playlist-title" class="display">Que no falte tu canción</h2>
+        <p class="playlist__text fx">Sumá a la playlist del casamiento las canciones que te gustaría escuchar ese día.</p>
+        <div class="playlist__actions fx">
+          <a class="btn btn--solid playlist__add" href="#" target="_blank" rel="noopener" hidden>Sumar canciones<span class="sr-only"> (se abre en otra pestaña)</span></a>
+          <a class="btn btn--line playlist__listen" href="#" target="_blank" rel="noopener" hidden>Escuchar la playlist<span class="sr-only"> (se abre en otra pestaña)</span></a>
+        </div>
+        <p class="playlist__note" hidden></p>
+        <p class="tbd">Pendiente: enlace de colaboración vigente (Spotify: vale 7 días) y, si se quiere, el de escucha.</p>
       </div>
     </section>
 
     <section id="mensajes" class="messages" aria-labelledby="msg-title">
-      <h2 id="msg-title" class="caps-title">Mensajes</h2>
-      <p class="messages__sub">Dejales unas palabras a Dolores y Mauro.</p>
+      <header class="head" data-reveal>
+        <p class="eyebrow">Para Dolores y Mauro</p>
+        <h2 id="msg-title" class="display">Mensajes</h2>
+        <p class="messages__sub fx">Dejales unas palabras.</p>
+      </header>
 
       <div class="wall" data-state="loading" role="region" aria-label="Mensajes de invitados aprobados">
         <figure class="wall__quote"><blockquote></blockquote><figcaption></figcaption></figure>
@@ -339,22 +414,12 @@
       </div>
     </section>
 
-    <!-- Playlist: diseñada; el reproductor se carga solo cuando el invitado lo pide (nunca autoplay) -->
-    <section id="musica" class="music" aria-labelledby="music-title" data-pending data-later>
-      <h2 id="music-title" class="caps-title">Música</h2>
-      <p class="music__sub">La playlist del casamiento</p>
-      <p class="tbd">Pendiente: link de la playlist de Spotify. El reproductor se carga solo al tocar el botón; nunca suena solo.</p>
-    </section>
-
     <figure class="closing">
       <img src="public/img/168-640.webp" srcset="public/img/168-640.webp 640w, public/img/168-1000.webp 1000w, public/img/168-1333.webp 1333w"
            sizes="(min-width: 768px) min(76rem, 90vw), 100vw" width="640" height="960" loading="lazy" decoding="async"
            alt="Dolores tira el sombrero al aire mientras corren de la mano">
-      <figcaption class="closing__sig">
-        <span class="seal seal--light" aria-hidden="true">
-          <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="48" /></svg>
-          <span>D</span><i></i><span>M</span>
-        </span>
+      <figcaption class="closing__sig" data-reveal>
+        <span class="rule-v" aria-hidden="true"></span>
         <span class="closing__names">Dolores <span class="script" aria-hidden="true">y</span><span class="sr-only">y</span> Mauro</span>
         <span class="closing__date">03 · 04 · 2027</span>
       </figcaption>
@@ -363,13 +428,18 @@
 
   <footer class="foot">
     <nav aria-label="Secciones">
-      <a href="#el-dia">El día</a><a href="#galeria">Galería</a><a href="#confirmar">Confirmar</a><a href="#mensajes">Mensajes</a>
+      <a href="#el-dia">El día</a><a href="#nosotros">Nosotros</a><a href="#confirmar">Confirmar</a><a href="#mensajes">Mensajes</a>
     </nav>
     <p>Dolores y Mauro · 03 · 04 · 2027</p>
   </footer>
 
   <a class="fab" href="#confirmar">Confirmar asistencia</a>
+  <!-- Música de fondo: solo si config.js tiene un audio con permiso de uso; nunca suena sola (la inicia el invitado) -->
+  <button class="music-toggle" type="button" aria-pressed="false" hidden>
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 18.5V5.2l10-2v12.6"/><circle cx="6.8" cy="18.5" r="2.3"/><circle cx="16.8" cy="15.8" r="2.3"/></svg>
+    <span class="sr-only">Música de fondo</span>
+  </button>
 
-  <script type="module" src="main.js?v=20261019a"></script>
+  <script type="module" src="main.js?v=20261108b"></script>
 </body>
 </html>

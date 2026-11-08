@@ -1,0 +1,23 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//FA Studio//Dolores y Mauro//ES
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:20270403-religiosa@dolores-y-mauro
+DTSTAMP:20261107T120000Z
+DTSTART:20270403T143000Z
+SUMMARY:Casamiento de Dolores y Mauro · Ceremonia religiosa
+LOCATION:Iglesia de Tumbaya\, Tumbaya\, Jujuy
+DESCRIPTION:Ceremonia religiosa\, 11:30 (hora de Argentina).
+END:VEVENT
+BEGIN:VEVENT
+UID:20270403-celebracion@dolores-y-mauro
+DTSTAMP:20261107T120000Z
+DTSTART:20270403T153000Z
+DTEND:20270404T010000Z
+SUMMARY:Casamiento de Dolores y Mauro · Celebración
+LOCATION:Finca Los Churquis\, Volcán\, Jujuy
+DESCRIPTION:Recepción 12:30 · Ceremonia civil 13:00 · Almuerzo 14:00 · Baile 15:00 · Fin 22:00 (hora de Argentina).
+END:VEVENT
+END:VCALENDAR

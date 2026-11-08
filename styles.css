@@ -23,12 +23,14 @@
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
   --ease-soft: cubic-bezier(0.33, 1, 0.68, 1);
-  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1); /* arranca con velocidad: respuesta directa a un toque (solapa del sobre) */
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1); /* arranca con velocidad: respuesta directa a un toque (la ventana de la apertura) */
+  /* Grano de papel: ruido muy tenue en el color de la tinta (≈ 4 % de opacidad media), sobre el marfil y el papel */
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .27 0 0 0 0 .24 0 0 0 0 .21 .26 0 0 0 -.1'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
 }
 
 *, *::before, *::after { box-sizing: border-box; }
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; scrollbar-color: var(--salvia) var(--marfil); }
-body { margin: 0; background: var(--marfil); color: var(--tinta); font: 400 1.0625rem/1.6 var(--sans); caret-color: var(--castano); }
+body { margin: 0; background: var(--marfil) var(--grain); color: var(--tinta); font: 400 1.0625rem/1.6 var(--sans); caret-color: var(--castano); }
 ::selection { background: var(--oliva); color: var(--marfil); }
 img { display: block; max-width: 100%; height: auto; }
 h1, h2, h3 { font-family: var(--serif); font-weight: 300; font-variation-settings: var(--display); line-height: 1.02; letter-spacing: -.01em; margin: 0; text-wrap: balance; }
@@ -43,8 +45,18 @@ a { color: inherit; }
 .skip:focus { left: 0; }
 .script { font-family: var(--script); font-weight: 400; text-transform: none; letter-spacing: 0; font-variation-settings: normal; }
 .note { font-size: .875rem; max-width: 60ch; color: var(--tinta-suave); }
-.caps-title { font-size: clamp(1.5rem, 6vw, 2.25rem); font-weight: 400; text-transform: uppercase; letter-spacing: .16em; text-align: center; }
-.caps-title .script { font-size: 1.3em; color: var(--castano); margin-inline: .1em; }
+/* Encabezados editoriales, iguales en todas las secciones: rótulo chico en versalitas entre dos filetes, y debajo una línea
+   grande en Fraunces liviana. Sin sellos ni monogramas: la identidad la dan la tipografía, el filete y la foto */
+.head { display: grid; justify-items: center; gap: clamp(.9rem, 2.5vw, 1.25rem); text-align: center; }
+.eyebrow { display: inline-flex; align-items: center; gap: .9rem; margin: 0 -.3em 0 0; font: 500 .75rem/1.2 var(--sans); letter-spacing: .3em;
+  text-transform: uppercase; color: var(--castano); }
+.eyebrow::before, .eyebrow::after { content: ""; width: clamp(1.25rem, 5vw, 2.25rem); height: 1px; background: currentColor; opacity: .45; }
+.eyebrow::before { transform-origin: 100% 50%; }
+.eyebrow::after { transform-origin: 0 50%; margin-right: .3em; }
+.display { font: 300 clamp(2.75rem, 12.5vw, 5.5rem)/1 var(--serif); font-variation-settings: var(--display); letter-spacing: -.02em; text-wrap: balance; }
+.display .script { font-size: .8em; color: var(--castano); margin-inline: .06em; }
+/* Filete vertical: une la portada con la invitación y firma el cierre */
+.rule-v { display: block; width: 1px; height: clamp(2.5rem, 8vw, 4rem); margin-inline: auto; background: currentColor; opacity: .5; transform-origin: 50% 0; }
 
 /* ---------- Vista pública vs. modo revisión (?revision) ---------- */
 /* Lo pendiente nunca llega a la vista pública: ni módulos sin datos ni anotaciones de desarrollo. */
@@ -58,23 +70,7 @@ html:not(.review) [data-pending], html:not(.review) .tbd, html:not(.review) .rev
 @media (max-width: 767px) { .review-bar { position: static; } } /* en celular son 3 líneas: fija taparía el 10 % de la pantalla */
 
 /* Sin JavaScript no hay cuenta regresiva, confirmados ni mensajes que cargar: se ocultan en vez de mostrar guiones */
-html:not(.js) :is(.countdown, .attendance, .wall) { display: none; }
-
-/* Lámina con passe-partout (solo interior): filete sobre la foto, como una copia montada */
-.plate { position: relative; }
-.plate img { width: 100%; }
-.plate::after { content: ""; position: absolute; inset: clamp(8px, 1.4vw, 14px); border: 1px solid rgb(245 240 232 / .7); pointer-events: none; }
-
-/* Sello con monograma D | M */
-.seal { position: relative; display: inline-grid; grid-template-columns: auto 1px auto; align-items: center; column-gap: .55em;
-  width: 4.5rem; aspect-ratio: 1; justify-content: center; font: 300 1.5rem/1 var(--serif); font-variation-settings: var(--display); color: var(--tinta); }
-.seal svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
-.seal circle { fill: none; stroke: var(--castano); stroke-width: 1; vector-effect: non-scaling-stroke; }
-.seal i { width: 1px; height: 1.1em; background: var(--castano); }
-.seal--light { color: var(--marfil); }
-.seal--light circle { stroke: var(--marfil); }
-.seal--light i { background: var(--marfil); }
-.seal--small { width: 3rem; font-size: 1rem; }
+html:not(.js) :is(.countdown, .wall) { display: none; }
 
 /* Fecha como pieza de papelería: SÁBADO | 3 | ABRIL 2027 */
 .datelock { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; text-align: center;
@@ -89,8 +85,10 @@ html:not(.js) :is(.countdown, .attendance, .wall) { display: none; }
 .hero { position: relative; min-height: calc(100svh - 8.5rem - var(--review-h, 0px)); overflow: hidden; isolation: isolate; color: var(--tinta); background: #D8DAD6; }
 .hero__media, .hero__media img { position: absolute; inset: 0; width: 100%; height: 100%; }
 .hero__media { z-index: -1; }
-.hero__media img { object-fit: cover; object-position: 42% 50%; color: transparent; } /* si la foto no carga, el alt no se pisa con los nombres */
-.hero__text { display: grid; justify-items: center; gap: .55rem; text-align: center; padding: calc(env(safe-area-inset-top) + 1.1rem) var(--gutter) 0; }
+/* La foto de la apertura (.ed__photo) repite este encuadre en cada tamaño: el relevo entre las dos es exacto */
+:is(.hero__media, .ed__photo) img { object-fit: cover; object-position: 42% 50%; color: transparent; } /* si la foto no carga, el alt no se pisa con los nombres */
+.hero__text { display: grid; justify-items: center; gap: .55rem; text-align: center; padding: calc(env(safe-area-inset-top) + max(1.6rem, 3.6svh)) var(--gutter) 0; }
+.hero__names:focus { outline: none; } /* recibe el foco al cerrar la apertura (destino de lectura, no un control) */
 /* En una línea, como en tablet y escritorio: apilado ocupaba 120 px de cielo y el título chocaba con el monte */
 .hero__names { font-size: 11.5vw; line-height: .9; }
 .hero__names .script { font-size: .7em; color: var(--castano); line-height: .8; margin: 0 .08em; }
@@ -98,7 +96,7 @@ html:not(.js) :is(.countdown, .attendance, .wall) { display: none; }
 .datelock--sky time { font-size: 2.25rem; border-color: rgb(70 61 53 / .35); }
 /* Pantallas angostas: el follaje sube; el bloque se compacta para dejar aire sobre las copas (medido a 320–360 px) */
 @media (max-width: 400px) {
-  .hero__text { padding-top: calc(env(safe-area-inset-top) + .7rem); gap: .4rem; }
+  .hero__text { padding-top: calc(env(safe-area-inset-top) + max(1.1rem, 2.6svh)); gap: .4rem; }
   .datelock--sky time { font-size: 2rem; padding-inline: .9rem; }
 }
 @media (max-width: 340px) {
@@ -107,44 +105,51 @@ html:not(.js) :is(.countdown, .attendance, .wall) { display: none; }
 
 /* ---------- Banda de datos: horarios + cuenta regresiva ---------- */
 .band { display: grid; gap: .75rem; padding: 1rem var(--gutter) 1.1rem; border-bottom: var(--hair); }
-.when { list-style: none; padding: 0; display: grid; gap: .3rem; }
+.when { list-style: none; padding: 0; display: grid; gap: .3rem; min-height: calc(2 * 1.35em + .3rem); }
+.band--plain { display: none; }
 .when li { display: grid; grid-template-columns: 3.4rem 1fr; align-items: baseline; font-size: .9375rem; line-height: 1.35; }
-.when time, .countdown [data-cd] { font: 400 1.25rem/1 var(--serif); font-variation-settings: var(--text-axes); font-variant-numeric: lining-nums tabular-nums; }
+.when time, .countdown [data-cd=d] { font: 400 1.25rem/1 var(--serif); font-variation-settings: var(--text-axes); font-variant-numeric: lining-nums tabular-nums; }
 .when time { color: var(--oliva); }
-.countdown { display: flex; flex-wrap: wrap; align-items: baseline; gap: .2rem .9rem; padding-top: .7rem; border-top: var(--hair);
+.countdown { display: flex; flex-wrap: wrap; align-items: baseline; gap: .2rem .45rem; padding-top: .7rem; border-top: var(--hair);
   font-size: .875rem; color: var(--tinta-suave); }
 .countdown__label { font: 600 .8125rem/1 var(--sans); letter-spacing: .2em; text-transform: uppercase; color: var(--oliva); }
-.countdown [data-cd] { color: var(--tinta); margin-right: .1em; }
+.countdown [data-cd=d] { color: var(--tinta); font-size: 1.375rem; }
 
 /* ---------- Invitación ---------- */
 section { padding: clamp(4rem, 11vw, 8rem) var(--gutter); }
-.invite { text-align: center; display: grid; justify-items: center; padding-block: clamp(3.5rem, 9vw, 6.5rem); }
-.invite__line { font: 300 clamp(1.75rem, 6.5vw, 2.75rem)/1.15 var(--serif); font-variation-settings: var(--display); max-width: 18ch; text-wrap: balance; }
+.invite { text-align: center; display: grid; justify-items: center; gap: .6rem; padding-block: 0 clamp(4rem, 10vw, 7rem); }
+.invite .rule-v { margin-bottom: clamp(2rem, 6vw, 3rem); color: var(--castano); }
+.invite__kicker { font: 400 clamp(3.25rem, 14vw, 5.25rem)/1 var(--script); color: var(--castano); }
+.invite__line { font: 300 clamp(1.75rem, 6.5vw, 2.75rem)/1.15 var(--serif); font-variation-settings: var(--display); letter-spacing: -.01em; max-width: 18ch; text-wrap: balance; }
 
 /* ---------- Dolores y Mauro (retrato, no cronología) ---------- */
 .portrait { display: grid; grid-template-columns: repeat(12, 1fr); column-gap: 1rem; row-gap: clamp(1.25rem, 4vw, 2rem); padding-top: 0; } /* título + texto: sin fotos, el espacio entre ambos es el de un encabezado */
 .portrait > * { grid-column: 1 / -1; }
-.portrait__words { text-align: center; }
+.portrait__words, .portrait .display { text-align: center; }
 
-/* ---------- El día: dos pueblos ---------- */
+/* ---------- El día: cronograma vertical ilustrado (hora · ícono · qué y dónde), unido por un hilo ---------- */
 .day { border-top: var(--hair); }
-.day__head { text-align: center; }
-.day h2 { font-size: clamp(2.75rem, 12vw, 5rem); }
-.day__sub { margin-top: .75rem; font: 400 1rem/1.4 var(--sans); color: var(--oliva); text-wrap: balance; }
-.towns { list-style: none; padding: 0; margin: 3rem auto 0; max-width: 64rem; display: grid; gap: 1.75rem; }
-.town { display: grid; justify-items: center; text-align: center; gap: .3rem; }
-.town__time { font: 300 clamp(3.25rem, 14vw, 5rem)/1 var(--serif); font-variation-settings: var(--display); color: var(--oliva); font-variant-numeric: lining-nums tabular-nums; }
-.town__name { font: 500 .8125rem/1.2 var(--sans); letter-spacing: .24em; text-transform: uppercase; color: var(--castano); margin-top: .35rem; }
-.town h3 { font-size: 1.75rem; font-weight: 400; margin-top: .6rem; }
-.route { display: grid; place-items: center; }
-.route span { width: 1px; height: 3rem; background: var(--arena); }
-.day__more { max-width: 40rem; margin: 3rem auto 0; display: grid; gap: .9rem; text-align: center; }
-.day__more strong { display: block; font: 400 1.25rem/1.2 var(--serif); font-variation-settings: var(--text-axes); }
+.day__nolink { margin: 2rem auto 0; text-align: center; }
+.timeline { --tl-time: 4.4rem; --tl-icon: 3rem; --tl-gap: .9rem; list-style: none; padding: 0; margin: 3rem auto 0; max-width: 34rem; }
+.tl__item { position: relative; display: grid; grid-template-columns: var(--tl-time) var(--tl-icon) 1fr; column-gap: var(--tl-gap); align-items: start; padding-bottom: 2rem; }
+.tl__item::before { content: ""; position: absolute; left: calc(var(--tl-time) + var(--tl-gap) + var(--tl-icon) / 2 - .5px); top: var(--tl-icon); bottom: 0;
+  width: 1px; background: var(--arena); transform-origin: 50% 0; }
+.tl__item:last-child { padding-bottom: 0; }
+.tl__item:last-child::before { display: none; }
+.tl__time { padding-top: .55rem; text-align: right; font: 300 1.75rem/1 var(--serif); font-variation-settings: var(--display); color: var(--oliva); font-variant-numeric: lining-nums tabular-nums; }
+.tl__icon { position: relative; z-index: 1; display: grid; place-items: center; width: var(--tl-icon); aspect-ratio: 1; border: 1px solid var(--arena); border-radius: 50%; background: var(--marfil); color: var(--castano); }
+.tl__icon svg { width: 52%; height: 52%; fill: none; stroke: currentColor; stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round; }
+.tl__body { padding-top: .45rem; min-width: 0; }
+.tl__body h3 { font-size: 1.5rem; font-weight: 400; }
+.tl__place { margin-top: .3rem; font-size: .9375rem; line-height: 1.4; color: var(--tinta-suave); }
+.tl__map { display: inline-flex; align-items: center; min-height: 44px; color: var(--oliva); font: 600 .875rem/1 var(--sans); text-underline-offset: 3px; }
+@media (max-width: 360px) { .timeline { --tl-time: 3.6rem; --tl-icon: 2.6rem; --tl-gap: .65rem; } .tl__time { font-size: 1.45rem; } }
 .day__cal { display: grid; justify-items: center; gap: .6rem; margin-top: 3rem; text-align: center; }
 
 /* ---------- Botones ---------- */
-.btn { display: inline-flex; align-items: center; justify-content: center; font: 600 .9375rem/1 var(--sans); min-height: 48px; padding: 0 1.5rem;
-  border-radius: 999px; cursor: pointer; text-decoration: none; transition: transform 160ms var(--ease-out), background-color 200ms ease, color 200ms ease; }
+/* Rectos y en versalitas espaciadas, como la papelería: sin pastillas de app */
+.btn { display: inline-flex; align-items: center; justify-content: center; font: 600 .8125rem/1 var(--sans); letter-spacing: .16em; text-transform: uppercase;
+  min-height: 50px; padding: 0 1.9rem; border-radius: 2px; cursor: pointer; text-decoration: none; transition: transform 160ms var(--ease-out), background-color 200ms ease, color 200ms ease; }
 .btn:active:not(:disabled) { transform: scale(.97); }
 .btn:disabled { cursor: progress; opacity: .7; }
 .btn--line { background: none; color: var(--oliva); border: 1px solid var(--oliva); }
@@ -154,16 +159,35 @@ section { padding: clamp(4rem, 11vw, 8rem) var(--gutter); }
   .btn--solid:hover { background: var(--tinta); }
 }
 
-/* ---------- Para tener en cuenta (dress code, regalos) ---------- */
-.details { background: var(--papel); }
-.details__grid { display: grid; gap: 2.5rem; max-width: 56rem; margin: 2.5rem auto 0; }
-.detail { display: grid; justify-items: center; gap: .6rem; text-align: center; }
-.detail h3 { font-size: 1.75rem; font-weight: 400; }
+/* ---------- Dress code: el rótulo, la consigna en grande y una línea; sin ícono, la tipografía alcanza ---------- */
+.details { background: var(--papel) var(--grain); padding-block: clamp(3rem, 9vw, 5.5rem); }
+/* Dress code: una franja editorial alineada a la izquierda (no una pantalla para una línea). En escritorio, consigna y texto
+   lado a lado, separados por un filete vertical */
+.details .head { justify-items: start; text-align: left; max-width: 64rem; margin-inline: auto; row-gap: .6rem; }
+.details .eyebrow::before { display: none; }
+.details .display { font-size: clamp(2.6rem, 11vw, 4.25rem); }
+.details .detail__text { max-width: 30ch; text-wrap: pretty; }
+.detail__text { max-width: 32ch; color: var(--tinta-suave); text-wrap: balance; }
+
+/* ---------- Sección propia de cada modalidad (rótulo, importe o frase, texto y datos bancarios) ---------- */
+.contribution { display: grid; justify-items: center; gap: 1rem; text-align: center; }
+.contribution .head { margin-bottom: .5rem; }
+.contribution__price { display: grid; justify-items: center; gap: .9rem; font-variant-numeric: lining-nums; }
+.contribution__note { font: 500 .75rem/1 var(--sans); letter-spacing: .3em; margin-right: -.3em; text-transform: uppercase; color: var(--castano); }
+.contribution__lead { font-size: clamp(2rem, 8vw, 3.25rem); line-height: 1.08; max-width: 16ch; }
+.contribution__text { max-width: 36ch; color: var(--tinta-suave); text-wrap: balance; }
+.bank { width: min(100%, 28rem); margin: 1rem 0 0; display: grid; border-top: var(--hair); text-align: left; }
+.bank > div { display: grid; grid-template-columns: 1fr auto; column-gap: 1rem; padding: .8rem 0; border-bottom: var(--hair); }
+.bank dt { font: 600 .75rem/1.2 var(--sans); letter-spacing: .16em; text-transform: uppercase; color: var(--oliva); }
+.bank dd { margin: .3rem 0 0; font-size: 1.0625rem; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.bank__copy { grid-column: 2; grid-row: 1 / 3; align-self: center; min-height: 44px; padding: 0 1rem; border: 1px solid var(--oliva); border-radius: 2px;
+  background: none; color: var(--oliva); font: 600 .8125rem/1 var(--sans); cursor: pointer; }
 
 /* ---------- Galería: ritmo editorial, miniatura → lightbox ---------- */
 .gallery { padding-inline: 0; }
-.gallery .caps-title { padding-inline: var(--gutter); }
-.gallery__grid { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; margin-top: 2.5rem; padding-inline: .5rem; }
+.gallery .head { padding-inline: var(--gutter); }
+.gallery__heart { width: .42em; height: .42em; margin-left: .1em; vertical-align: .34em; fill: none; stroke: var(--castano); stroke-width: 1.3; stroke-linejoin: round; }
+.gallery__grid { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; margin-top: clamp(2.5rem, 7vw, 4rem); padding-inline: .5rem; }
 .gallery__item { position: relative; display: block; overflow: hidden; background: var(--arena); }
 .gallery__item--h { grid-column: 1 / -1; aspect-ratio: 3 / 2; }
 .gallery__item--v { aspect-ratio: 2 / 3; }
@@ -191,20 +215,25 @@ section { padding: clamp(4rem, 11vw, 8rem) var(--gutter); }
 .info h3 { font-size: 1.5rem; font-weight: 400; }
 
 /* ---------- Confirmar asistencia ---------- */
-.rsvp { background: var(--oliva); color: var(--marfil); display: grid; justify-items: center; text-align: center; gap: 1.5rem; }
-.rsvp h2 { font-size: clamp(2.25rem, 9vw, 3.75rem); }
+.rsvp { background: var(--oliva) var(--grain); color: var(--marfil); display: grid; justify-items: center; text-align: center; gap: clamp(2rem, 6vw, 3rem); }
+.rsvp .eyebrow { color: var(--arena); }
+.rsvp .display { font-size: clamp(2.5rem, 10.5vw, 4.5rem); }
+.rsvp__sub { color: color-mix(in srgb, var(--marfil) 88%, var(--oliva)); }
 
 .form { width: min(100%, 34rem); text-align: left; }
 .form__body { display: grid; gap: 1.25rem; margin: 0; padding: 0; border: 0; min-width: 0; }
-.rsvp .form, .rsvp .form__done { background: var(--marfil); color: var(--tinta); padding: clamp(1.25rem, 5vw, 2.25rem); border-radius: 4px; }
+.rsvp .form, .rsvp .form__done { background: var(--marfil); color: var(--tinta); padding: clamp(1.4rem, 5.5vw, 2.75rem); border-radius: 2px;
+  box-shadow: 0 1px 0 rgb(255 255 255 / .06) inset, 0 40px 70px -45px rgb(18 22 14 / .6); }
 .field { display: grid; gap: .4rem; margin: 0; padding: 0; border: 0; min-width: 0; }
 .field label, .field legend { font-weight: 600; font-size: .9375rem; padding: 0; }
 .opt { font-weight: 400; color: var(--tinta-suave); }
-.field input:not([type=radio], [type=checkbox]), .field textarea {
-  width: 100%; min-height: 48px; padding: .7rem .85rem; border: 1px solid color-mix(in srgb, var(--salvia) 55%, var(--oliva)); border-radius: 4px; background: #FFFDF9;
+.field input:not([type=radio], [type=checkbox]), .field textarea, .field select {
+  width: 100%; min-height: 48px; padding: .7rem .85rem; border: 1px solid color-mix(in srgb, var(--salvia) 55%, var(--oliva)); border-radius: 2px; background: #FFFDF9;
   color: var(--tinta); font: 400 1rem/1.4 var(--sans); }
 .field textarea { resize: vertical; }
-.field input:focus-visible, .field textarea:focus-visible { outline: 2px solid var(--castano); outline-offset: 1px; border-color: var(--castano); }
+.field select { appearance: none; padding-right: 2.5rem; cursor: pointer;
+  background: #FFFDF9 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%2348553E' stroke-width='1.5'/%3E%3C/svg%3E") no-repeat right .9rem center / .75rem; }
+.field input:focus-visible, .field textarea:focus-visible, .field select:focus-visible { outline: 2px solid var(--castano); outline-offset: 1px; border-color: var(--castano); }
 .field [aria-invalid] { border-color: var(--castano); border-width: 2px; }
 .field input[type=number] { max-width: 7rem; }
 .choice { gap: .5rem; }
@@ -218,7 +247,22 @@ input[type=radio], input[type=checkbox] { width: 1.25rem; height: 1.25rem; margi
 .field__err:empty, .field__count:empty { display: none; }
 .field__hint, .field__count { font-size: .8125rem; color: var(--tinta-suave); }
 .field__count { justify-self: end; font-variant-numeric: tabular-nums; }
-.if-yes { display: grid; gap: 1.25rem; padding-left: 1rem; border-left: 2px solid var(--arena); }
+.members { display: grid; gap: .5rem; }
+.members legend { margin-bottom: .25rem; }
+.members__list { list-style: none; padding: 0; margin: .25rem 0 0; border-bottom: var(--hair); }
+.member { display: grid; gap: .6rem; padding: .35rem 0 1rem; border-top: var(--hair); }
+.member__head { display: flex; align-items: center; justify-content: space-between; min-height: 44px; }
+.member__n { font: 500 .75rem/1 var(--sans); letter-spacing: .2em; text-transform: uppercase; color: var(--castano); }
+.member .field label { font-size: .875rem; }
+.member__remove, .members__add { min-height: 44px; padding: 0; border: 0; background: none; font: 600 .875rem/1 var(--sans); cursor: pointer;
+  text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+.member__remove { color: var(--castano); }
+.members__add { color: var(--oliva); }
+.members__add span { display: inline-block; margin-right: .2em; text-decoration: none; }
+.members__foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .25rem 1rem; }
+.members__add:disabled { cursor: not-allowed; opacity: .55; }
+.members__count { font-size: .875rem; color: var(--tinta-suave); font-variant-numeric: tabular-nums; }
+@media (min-width: 560px) { .member { grid-template-columns: 1fr 13rem; column-gap: 1rem; align-items: start; } .member__head, .member__notes { grid-column: 1 / -1; } }
 .form .btn--solid { justify-self: start; }
 .form__status { font-size: .9375rem; font-weight: 600; color: var(--castano); }
 .form__status:empty { display: none; }
@@ -227,20 +271,12 @@ input[type=radio], input[type=checkbox] { width: 1.25rem; height: 1.25rem; margi
 .form__done-text { font: 300 1.375rem/1.35 var(--serif); font-variation-settings: var(--text-axes); }
 .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
 
-/* Confirmados visibles */
-.attendance { display: grid; justify-items: center; gap: .75rem; max-width: 40rem; }
-.attendance__count { display: grid; justify-items: center; font-size: .9375rem; }
-.attendance [data-count] { font: 300 3.5rem/1 var(--serif); font-variation-settings: var(--display); font-variant-numeric: lining-nums tabular-nums; }
-.attendance__names { list-style: none; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: .25rem 1.25rem; font: 400 1.125rem/1.4 var(--serif); }
-.attendance:not([data-state]) .attendance__count { visibility: hidden; }
-.attendance__error, .attendance[data-state="error"] > :not(.attendance__error) { display: none; }
-.attendance[data-state="error"] .attendance__error { display: block; }
 .rsvp .demo-note { background: rgb(245 240 232 / .12); color: var(--marfil); border-color: var(--arena); }
 .rsvp .form .demo-note { background: var(--papel); color: var(--tinta); border-color: var(--arena); }
 
 /* ---------- Mensajes: muro de mensajes aprobados (rota) + formulario ---------- */
-.messages { display: grid; justify-items: center; gap: 2rem; text-align: center; border-top: var(--hair); }
-.messages__sub { margin-top: -1.25rem; color: var(--tinta-suave); }
+.messages { display: grid; justify-items: center; gap: clamp(2rem, 6vw, 3rem); text-align: center; border-top: var(--hair); }
+.messages__sub { color: var(--tinta-suave); }
 .wall { display: grid; justify-items: center; gap: 1.25rem; width: min(100%, 40rem); min-height: 9rem; align-content: center; }
 .wall__quote blockquote { white-space: pre-line; font: 300 clamp(1.375rem, 5.5vw, 2rem)/1.3 var(--serif); font-variation-settings: var(--display); text-wrap: pretty; }
 .wall__quote blockquote::before { content: "“"; }
@@ -253,15 +289,25 @@ input[type=radio], input[type=checkbox] { width: 1.25rem; height: 1.25rem; margi
 .wall:not([data-state="ready"]) :is(.wall__quote, .wall__nav), .wall:not([data-state="empty"]) .wall__empty, .wall:not([data-state="error"]) .wall__error { display: none; }
 .messages .form { padding-top: 2rem; border-top: var(--hair); }
 
-/* ---------- Música ---------- */
-.music { text-align: center; display: grid; justify-items: center; gap: .6rem; background: var(--papel); }
-.music__sub { color: var(--tinta-suave); }
+/* ---------- Playlist pública (la arman los invitados en la plataforma) y música de fondo ---------- */
+.playlist { background: var(--papel) var(--grain); }
+.playlist__icon { color: var(--castano); }
+.playlist__icon svg { display: block; width: 2rem; height: 2rem; fill: none; stroke: currentColor; stroke-width: 1.1; stroke-linecap: round; stroke-linejoin: round; }
+.playlist__text { max-width: 34ch; color: var(--tinta-suave); text-wrap: balance; }
+.playlist__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: .75rem; margin-top: .75rem; }
+.playlist__note { font-size: .875rem; color: var(--tinta-suave); }
+.music-toggle { position: fixed; z-index: 11; top: calc(env(safe-area-inset-top) + .75rem); right: .75rem; display: grid; place-items: center;
+  width: 44px; height: 44px; border: 1px solid rgb(70 61 53 / .25); border-radius: 50%; background: rgb(245 240 232 / .9); color: var(--tinta); cursor: pointer; }
+.music-toggle svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+.music-toggle[aria-pressed="true"] { background: var(--oliva); border-color: var(--oliva); color: var(--marfil); }
+body:has(.lightbox[open]) .music-toggle, .sealed .music-toggle { visibility: hidden; }
 
 /* ---------- Cierre ---------- */
 .closing { position: relative; color: var(--marfil); }
 .closing img { width: 100%; height: 88svh; object-fit: cover; object-position: 50% 30%; }
 .closing::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgb(38 34 30 / .5) 0%, rgb(38 34 30 / 0) 42%); pointer-events: none; }
-.closing__sig { position: absolute; inset: clamp(2rem, 7svh, 4.5rem) 0 auto; z-index: 1; display: grid; justify-items: center; gap: .9rem; text-align: center; text-shadow: 0 1px 20px rgb(30 26 22 / .35); }
+.closing__sig { position: absolute; inset: clamp(2rem, 7svh, 4.5rem) 0 auto; z-index: 1; display: grid; justify-items: center; gap: 1.1rem; text-align: center; text-shadow: 0 1px 20px rgb(30 26 22 / .35); }
+.closing__sig .rule-v { height: clamp(2rem, 6vw, 3rem); opacity: .7; }
 .closing__names { font: 300 clamp(1.4rem, 6vw, 2rem)/1 var(--serif); font-variation-settings: var(--display); text-transform: uppercase; letter-spacing: .16em; }
 .closing__names .script { font-size: 1.3em; color: var(--arena); }
 .closing__date { font: 500 .8125rem/1 var(--sans); letter-spacing: .3em; }
@@ -272,8 +318,8 @@ input[type=radio], input[type=checkbox] { width: 1.25rem; height: 1.25rem; margi
 
 /* ---------- Botón fijo (solo móvil) ---------- */
 .fab { position: fixed; z-index: 10; left: 50%; bottom: calc(env(safe-area-inset-bottom) + 1rem); translate: -50% 0;
-  display: inline-flex; align-items: center; min-height: 48px; padding: 0 1.5rem; border-radius: 999px; white-space: nowrap;
-  background: var(--oliva); color: var(--marfil); font: 600 .9375rem/1 var(--sans); text-decoration: none;
+  display: inline-flex; align-items: center; min-height: 50px; padding: 0 1.75rem; border-radius: 2px; white-space: nowrap;
+  background: var(--oliva); color: var(--marfil); font: 600 .8125rem/1 var(--sans); letter-spacing: .16em; text-transform: uppercase; text-decoration: none;
   box-shadow: 0 6px 20px rgb(38 34 30 / .22); visibility: hidden; transform: translateY(calc(100% + 1.5rem));
   transition: transform 300ms cubic-bezier(0.32, 0.72, 0, 1), visibility 0s 300ms; }
 .fab.is-shown { visibility: visible; transform: none; transition: transform 300ms cubic-bezier(0.32, 0.72, 0, 1), visibility 0s; }
@@ -283,13 +329,13 @@ body:has(.lightbox[open]) .fab { visibility: hidden; }
 /* ---------- Tablet y desktop ---------- */
 @media (min-width: 768px) {
   .hero { min-height: calc(100svh - 5rem); }
-  .hero__media img { object-position: 50% 30%; }
+  :is(.hero__media, .ed__photo) img { object-position: 50% 30%; }
   .hero__text { padding-top: 6vh; gap: 1rem; }
   .hero__names { font-size: clamp(4.5rem, 8vw, 8rem); }
   .datelock--sky time { font-size: 3rem; }
 
   .band { grid-template-columns: 1fr auto; align-items: center; column-gap: 2rem; padding-block: 1rem; padding-inline: var(--wide); }
-  .when { grid-auto-flow: column; justify-content: start; column-gap: 2.5rem; }
+  .when { grid-auto-flow: column; justify-content: start; column-gap: 2.5rem; min-height: 1.35em; }
   .countdown { padding: 0 0 0 2rem; border-top: 0; border-left: var(--hair); }
   .fab { display: none; }
   .foot { padding-bottom: calc(env(safe-area-inset-bottom) + 2rem); }
@@ -297,21 +343,21 @@ body:has(.lightbox[open]) .fab { visibility: hidden; }
   .portrait { column-gap: 2rem; max-width: 80rem; margin-inline: auto; }
   .portrait__words { grid-column: 4 / 10; }
 
-  .towns { grid-template-columns: 1fr auto 1fr; align-items: start; gap: 2rem; }
-  .route span { width: 7rem; height: 1px; margin-top: 2.6rem; }
+  .timeline { --tl-time: 6.5rem; --tl-icon: 3.5rem; --tl-gap: 1.5rem; max-width: 40rem; }
+  .tl__item { padding-bottom: 2.5rem; }
+  .tl__time { font-size: 2.25rem; padding-top: .6rem; }
+  .tl__body { padding-top: .6rem; }
+  .tl__body h3 { font-size: 1.75rem; }
 
-  .details__grid, .info__grid { grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); }
+  .info__grid { grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); }
 
   /* Galería: filas de 12 columnas; la horizontal marca el alto y las verticales se encuadran */
   .gallery__grid { grid-template-columns: repeat(12, 1fr); gap: .75rem; max-width: 84rem; margin-inline: auto; padding-inline: var(--gutter); }
   .gallery__item--v { aspect-ratio: auto; }
-  .gallery__item:nth-child(1) { grid-column: 1 / 9; }
-  .gallery__item:nth-child(2) { grid-column: 9 / 13; }
-  .gallery__item:nth-child(3) { grid-column: 1 / 5; }
-  .gallery__item:nth-child(4) { grid-column: 5 / 13; }
-  .gallery__item:nth-child(5) { grid-column: 1 / 4; }
-  .gallery__item:nth-child(6) { grid-column: 4 / 7; }
-  .gallery__item:nth-child(7) { grid-column: 7 / 13; }
+  .gallery__item:nth-child(4n+1) { grid-column: 1 / 9; }
+  .gallery__item:nth-child(4n+2) { grid-column: 9 / 13; }
+  .gallery__item:nth-child(4n+3) { grid-column: 1 / 5; }
+  .gallery__item:nth-child(4n+4) { grid-column: 5 / 13; }
   .lightbox__prev, .lightbox__next { bottom: auto; top: calc(50% - 24px); }
   .lightbox__prev { left: 1.5rem; }
   .lightbox__next { right: 1.5rem; }
@@ -327,7 +373,7 @@ body:has(.lightbox[open]) .fab { visibility: hidden; }
    libre para el texto y la pareja con los pies. A pantalla completa entran; la banda queda justo debajo del pliegue. */
 @media (min-width: 1024px) and (min-aspect-ratio: 8/5) {
   .hero { min-height: 100svh; }
-  .hero__media img { object-position: 50% 40%; }
+  :is(.hero__media, .ed__photo) img { object-position: 50% 40%; }
   .hero__text { padding-top: 4vh; }
 }
 
@@ -335,7 +381,7 @@ body:has(.lightbox[open]) .fab { visibility: hidden; }
    pantallazo. El hero deja exactamente el alto de la banda (3,6rem) y el encuadre mantiene pareja con pies y cielo libre. */
 @media (min-width: 1700px) and (min-aspect-ratio: 8/5) {
   .hero { min-height: calc(100svh - 3.6rem); }
-  .hero__media img { object-position: 50% 62%; }
+  :is(.hero__media, .ed__photo) img { object-position: 50% 62%; }
   /* Título y fecha algo más compactos: así el bloque entra entero en el cielo y el recorte reparte el aire
      (≈35 px sobre el árbol más alto, ≈37 px de pasto bajo los pies). La foto ya se ve a todo su ancho. */
   .hero__text { padding-top: 1.5rem; }
@@ -350,9 +396,7 @@ body:has(.lightbox[open]) .fab { visibility: hidden; }
   .closing img { aspect-ratio: 6 / 5; object-position: 50% 99%; }
   .closing::after { display: none; }
   .closing__sig { position: static; padding-top: 2.5rem; color: var(--tinta); text-shadow: none; }
-  .closing__sig .seal--light { color: var(--tinta); }
-  .closing__sig .seal--light circle { stroke: var(--castano); }
-  .closing__sig .seal--light i { background: var(--castano); }
+  .closing__sig .rule-v { color: var(--castano); }
   .closing__names .script { color: var(--castano); }
   .closing__date { color: var(--tinta-suave); }
 }
@@ -365,7 +409,7 @@ body:has(.lightbox[open]) .fab { visibility: hidden; }
    para que la escena (pareja y caballo) siga entrando */
 @media (orientation: landscape) and (max-height: 500px) {
   .hero { min-height: 100svh; }
-  .hero__media img { object-position: 50% 65%; }
+  :is(.hero__media, .ed__photo) img { object-position: 50% 65%; }
   .hero__text { grid-auto-flow: column; justify-content: center; align-items: center; column-gap: 1.75rem; padding-top: .9rem; }
   .hero__names { display: block; font-size: 2.6rem; }
   .hero__names .script { margin: 0 .08em; }
@@ -373,127 +417,175 @@ body:has(.lightbox[open]) .fab { visibility: hidden; }
   .datelock--sky time { font-size: 1.9rem; }
 }
 
-/* ---------- Apertura: sobre lacrado con el monograma D | M antes de la invitación ---------- */
-/* Mientras el sobre está cerrado, la página no se desplaza y la entrada del hero espera (arranca al abrirlo) */
+/* ---------- Apertura: portada editorial sobre papel, con una ventana troquelada en arco hacia la foto de la portada ---------- */
+/* Mientras está cerrada, la página no se desplaza y la entrada del hero espera (arranca al abrirla) */
 .sealed { overflow: hidden; }
 .sealed :is(.hero, .hero *, .band) { animation-play-state: paused; }
-.opening { position: fixed; inset: 0; width: 100%; height: 100%; max-width: none; max-height: none; margin: 0; border: 0;
-  padding: env(safe-area-inset-top) var(--gutter) env(safe-area-inset-bottom); color: var(--tinta);
-  background: radial-gradient(120% 85% at 50% 45%, var(--marfil) 50%, var(--papel)); }
-.opening[open] { display: grid; place-items: center; }
+/* La foto se asienta dentro de la apertura: la portada no repite ese movimiento y el relevo entre las dos es exacto */
+.photo-led .hero__media img { animation: none; }
+.opening { position: fixed; inset: 0; width: 100%; height: 100%; max-width: none; max-height: none; margin: 0; padding: 0; border: 0; color: var(--tinta);
+  background: var(--grain), radial-gradient(130% 90% at 50% 38%, var(--marfil) 55%, var(--papel)); background-color: var(--marfil); }
+.opening[open] { display: block; }
 .opening::backdrop { background: none; } /* el fundido tiene que dejar ver la portada, no un velo */
-/* Ancho del sobre: lo limita también el alto, para que la solapa abierta (58 % del alto, por encima) entre centrada */
-.opening__open { --env-w: min(78vw, 27rem, (100svh - 7rem) / 2.16 * 1.42); display: grid; justify-items: center; gap: clamp(1.75rem, 5vh, 2.75rem);
-  padding: 1rem; border: 0; background: none; color: inherit; font: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; }
-@media (min-width: 768px) { .opening__open { --env-w: min(78vw, 34rem, (100svh - 7rem) / 2.16 * 1.42); } } /* tablet y escritorio: con 27rem quedaba perdido */
 .opening:focus, .opening__open:focus-visible { outline: none; }
-.opening__open:focus-visible .envelope { outline: 2px solid var(--castano); outline-offset: 8px; }
-/* Papel: luz desde arriba a la izquierda (la misma del brillo del lacre), sombra de contacto corta y cálida */
-.envelope { position: relative; display: block; width: var(--env-w); aspect-ratio: 1.42; border-radius: 2px;
-  background: linear-gradient(160deg, color-mix(in srgb, var(--papel) 55%, var(--marfil)), var(--papel) 70%);
-  box-shadow: 0 1px 2px rgb(70 61 53 / .1), 4px 18px 34px -20px rgb(70 61 53 / .34); }
-.envelope::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0;
-  box-shadow: 6px 28px 46px -24px rgb(70 61 53 / .26); } /* sombra extra del hover: se funde su opacidad, no se anima box-shadow */
-.envelope__folds { position: absolute; inset: 0; width: 100%; height: 100%; }
-.envelope__pocket-shade { fill: none; stroke: rgb(70 61 53 / .07); stroke-width: 3; vector-effect: non-scaling-stroke; }
-.envelope__crease { fill: none; stroke: var(--arena); stroke-width: 1; vector-effect: non-scaling-stroke; }
-/* Solapa: dos caras en 3D (exterior clara, interior en sombra hacia el pliegue); su sombra sobre el sobre es una capa aparte */
-.envelope__flap, .envelope__flap-shadow { position: absolute; inset: 0 0 auto; height: 58%; }
-.envelope__flap { transform-origin: 50% 0; transform: perspective(1000px) rotateX(0deg); transform-style: preserve-3d; }
-.envelope__face { position: absolute; inset: 0; -webkit-backface-visibility: hidden; backface-visibility: hidden; }
-.envelope__face--out { clip-path: polygon(0 0, 100% 0, 50% 100%);
-  background: linear-gradient(170deg, color-mix(in srgb, var(--papel) 30%, var(--marfil)), color-mix(in srgb, var(--papel) 75%, var(--marfil))); }
-.envelope__face--in { clip-path: polygon(0 100%, 100% 100%, 50% 0); transform: rotateX(180deg); visibility: hidden; /* WebKit no respeta backface-visibility acá: la cara la decide visibility */
-  background: linear-gradient(to top, color-mix(in srgb, var(--papel) 90%, var(--tinta)), var(--papel)); }
-.envelope__flap-shadow { translate: 0 1.5px; filter: blur(1.5px); opacity: .6; }
-.envelope__flap-shadow::before { content: ""; position: absolute; inset: 0; clip-path: polygon(0 0, 100% 0, 50% 100%); background: rgb(70 61 53 / .3); }
-/* Lacre: borde levemente irregular, impronta hundida con filete y monograma D | M del sitio (en relieve, no impreso) */
-.envelope__seal { --s: max(3.25rem, var(--env-w) * .21); position: absolute; left: 50%; top: 100%; width: var(--s); aspect-ratio: 1; translate: -50% -50%;
-  display: flex; align-items: center; justify-content: center; column-gap: .5em;
-  font: 300 calc(var(--s) * .25)/1 var(--serif); font-variation-settings: var(--display); color: color-mix(in srgb, var(--marfil) 95%, var(--castano)); /* ≥ 5:1 aun sobre el brillo del lacre */
-  text-shadow: 0 -1px 0 rgb(46 30 20 / .35), 0 1px 0 rgb(255 255 255 / .14);
-  filter: drop-shadow(0 1px 1px rgb(46 30 20 / .3)) drop-shadow(3px 5px 6px rgb(70 61 53 / .3));
-  -webkit-backface-visibility: hidden; backface-visibility: hidden; } /* pasados los 90° queda del lado de atrás de la solapa */
-.envelope__seal::before { content: ""; position: absolute; inset: 0; z-index: -1;
-  background: radial-gradient(circle at 36% 30%, color-mix(in srgb, var(--castano) 93%, white), var(--castano) 55%, color-mix(in srgb, var(--castano) 80%, black));
-  --wax: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M99.0 50.0 L99.4 54.9 L97.9 59.5 L95.2 63.7 L92.6 67.7 L90.8 71.8 L89.0 76.1 L86.7 80.1 L83.7 83.7 L80.2 86.8 L76.4 89.5 L72.2 91.5 L67.9 93.2 L63.7 95.2 L59.4 97.5 L54.9 99.3 L50.0 99.6 L45.3 98.0 L40.9 95.8 L36.6 94.3 L32.0 93.4 L27.4 92.2 L23.4 89.9 L19.9 86.7 L16.8 83.2 L13.9 79.6 L11.3 75.9 L8.7 72.1 L6.0 68.2 L3.2 64.2 L1.4 59.7 L1.3 54.8 L2.5 50.0 L3.6 45.4 L3.9 40.8 L4.0 36.0 L5.1 31.4 L7.6 27.4 L10.9 23.9 L14.2 20.6 L17.3 17.3 L20.5 14.0 L23.8 10.8 L27.4 7.6 L31.3 4.9 L35.8 3.2 L40.6 2.9 L45.4 3.2 L50.0 3.0 L54.7 2.2 L59.6 1.9 L64.2 3.1 L68.3 5.9 L71.9 9.0 L75.6 11.8 L79.4 14.2 L83.2 16.8 L86.7 19.9 L89.9 23.3 L92.6 27.2 L94.3 31.6 L95.2 36.3 L96.0 40.8 L97.4 45.3Z'/%3E%3C/svg%3E");
-  -webkit-mask: var(--wax) center / 100% 100% no-repeat; mask: var(--wax) center / 100% 100% no-repeat; }
-.envelope__seal::after { content: ""; position: absolute; inset: 11%; border-radius: 50%; pointer-events: none;
-  box-shadow: inset 0 1px 2px rgb(30 18 10 / .5), inset 0 -1px 1px rgb(255 255 255 / .1), 0 1px 0 rgb(255 255 255 / .12); }
-.envelope__seal i { width: 1px; height: 1.1em; background: currentColor; opacity: .75; }
-.envelope__seal svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
-.envelope__seal circle { fill: none; stroke: rgb(245 240 232 / .3); stroke-width: 1; vector-effect: non-scaling-stroke; }
-/* Celular en horizontal: poco alto. El sobre se achica menos y deja arriba el lugar de la solapa abierta */
+/* Todo el papel es el botón: rótulo, nombres, fecha y la ventana, en columna. La ventana termina donde termina la portada
+   (--below: lo que queda debajo de ella, medido por el script) y el llamado va centrado en esa franja */
+.opening__open { position: relative; display: grid; grid-template-rows: auto auto auto minmax(0, 1fr); grid-template-columns: minmax(0, 1fr); justify-items: center;
+  width: 100%; height: 100%; padding: calc(env(safe-area-inset-top) + clamp(1.75rem, 6svh, 3.75rem)) var(--gutter) var(--below, 6rem);
+  border: 0; background: none; color: inherit; font: inherit; text-align: center; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.opening__open > :not(.ed__photo, .opening__cta) { position: relative; } /* por encima de la foto mientras se agranda */
+/* La foto ocupa la caja exacta de la portada (la mide el script) y se recorta a la ventana; hasta medirla no se ve */
+.ed__photo { position: fixed; inset: 0 0 auto; height: 100%; overflow: hidden; visibility: hidden;
+  clip-path: inset(var(--wt, 50%) var(--wr, 50%) var(--wb, 50%) var(--wl, 50%) round var(--wa, 0px) var(--wa, 0px) 0 0); }
+.is-fit .ed__photo { visibility: visible; }
+.ed__photo img { position: absolute; inset: 0; width: 100%; height: 100%; scale: 1.06; }
+/* Velo marfil: la foto se ve atenuada, como impresa en el papel; al abrir se levanta y aparece con todo su color */
+.ed__wash { position: absolute; inset: 0; background: var(--marfil); opacity: .14; }
+/* Borde del troquel: el espesor del papel (sombra interior corta) y un filete marfil adentro, como un passe-partout */
+.ed__window { height: 100%; aspect-ratio: 3 / 4; max-width: 100%; border-radius: 999px 999px 0 0;
+  box-shadow: inset 0 2px 3px -1px rgb(70 61 53 / .35), inset 0 0 0 1px rgb(70 61 53 / .12); pointer-events: none; }
+.ed__window::after { content: ""; position: absolute; inset: clamp(7px, 1.6svh, 12px); border: 1px solid rgb(245 240 232 / .6); border-radius: inherit; }
+.ed__kicker { font: 500 .75rem/1 var(--sans); letter-spacing: .34em; margin-right: -.34em; text-transform: uppercase; color: var(--oliva); }
+.ed__names { margin-top: clamp(.8rem, 2.4svh, 1.4rem); font: 300 clamp(2.1rem, min(10.4vw, 8.5svh), 6.25rem)/.95 var(--serif); font-variation-settings: var(--display);
+  letter-spacing: -.02em; white-space: nowrap; }
+.ed__names .script { font-size: .7em; color: var(--castano); margin: 0 .06em; }
+.ed__date { margin: clamp(.7rem, 2svh, 1.1rem) 0 clamp(1.5rem, 4.5svh, 2.75rem); max-width: 30ch; font: 400 .9375rem/1.35 var(--serif); font-variation-settings: var(--text-axes); color: var(--tinta-suave); text-wrap: balance; }
+.opening__cta { position: absolute; left: 0; right: 0; bottom: max(calc((var(--below, 6rem) - 1.85rem) / 2), env(safe-area-inset-bottom) + .5rem); width: max-content; margin: 0 auto; padding: .35rem 0 .6rem .3em; font: 500 .75rem/1 var(--sans); letter-spacing: .3em; text-transform: uppercase; color: var(--oliva); }
+/* Filete del llamado: a media extensión en reposo; se completa con el puntero */
+.opening__cta::after { content: ""; position: absolute; left: .3em; right: .3em; bottom: 0; height: 1px; background: currentColor; opacity: .5; scale: .45 1; }
+.opening__open:focus-visible .opening__cta { color: var(--castano); }
+.opening__open:focus-visible .opening__cta::after { scale: 1 1; opacity: 1; height: 2px; }
+@media (min-width: 768px) { .ed__window { aspect-ratio: 4 / 5; } .ed__date { font-size: 1.0625rem; } }
+/* Celular en horizontal: poco alto; la ventana se vuelve apaisada para que la escena entre */
 @media (orientation: landscape) and (max-height: 500px) {
-  .opening__open { --env-w: min(60vw, (100svh - 5.5rem) / 1.58 * 1.42); gap: 1rem; padding-top: calc(var(--env-w) / 1.42 * .58); }
+  .ed__names { font-size: clamp(2rem, 11svh, 3rem); margin-top: .5rem; }
+  .ed__date { margin: .4rem 0 .9rem; font-size: .875rem; max-width: none; }
+  .ed__window { aspect-ratio: 16 / 9; }
+  /* La ventana llega al borde inferior (ahí camina la pareja): el llamado pasa al margen de papel, abajo a la derecha */
+  .opening__cta { left: auto; right: calc(env(safe-area-inset-right) + 1rem); bottom: calc(env(safe-area-inset-bottom) + 1rem); }
 }
-.opening__cta { padding-bottom: .45rem; border-bottom: 1px solid color-mix(in srgb, var(--oliva) 35%, transparent);
-  font: 500 .8125rem/1 var(--sans); letter-spacing: .28em; text-transform: uppercase; color: var(--oliva); }
 
 @media (prefers-reduced-motion: no-preference) {
-  /* Llegada: el sobre se posa, el filete del lacre se dibuja y aparece la invitación a abrir */
-  .opening[open] .envelope { animation: settle-in 900ms var(--ease-out) 100ms backwards; }
-  .opening[open] .envelope__seal circle { stroke-dasharray: 245; stroke-dashoffset: 245; animation: draw 1.2s var(--ease-in-out) .45s forwards; }
-  .opening[open] .opening__cta { animation: rise 600ms var(--ease-out) 750ms backwards; }
-  .envelope { transition: translate 300ms var(--ease-out), opacity 300ms var(--ease-out) 340ms; }
-  .envelope::after { transition: opacity 300ms ease; }
-  @media (hover: hover) and (pointer: fine) {
-    .opening__open:hover .envelope { translate: 0 -3px; }
-    .opening__open:hover .envelope::after { opacity: 1; }
-  }
-  /* Presión: el lacre se hunde (160 ms) */
-  .envelope__seal { transition: scale 160ms var(--ease-out), opacity 140ms var(--ease-in-out), visibility 0s 90ms; }
-  .opening__open:active .envelope__seal { scale: .96; }
-  /* Abrir (t = 0): la solapa gira sin demora llevando el lacre en la punta (90° a los ≈ 100 ms); el lacre se desvanece
-     mientras llega de canto. El llamado se va enseguida, para no quedar sobre la pareja */
-  .envelope__flap { transition: transform 560ms var(--ease-drawer); }
-  .envelope__flap-shadow { transition: opacity 200ms var(--ease-out); }
-  .opening__cta { transition: opacity 150ms var(--ease-out); }
-  .is-opening .envelope__flap { transform: perspective(1000px) rotateX(180deg); }
-  .is-opening :is(.envelope__seal, .envelope__flap-shadow, .opening__cta) { opacity: 0; }
-  /* A los 90 ms la solapa cruza los 90°: se cambia de cara (exterior y lacre se ocultan, aparece la interior) */
-  .is-opening .envelope__face { transition: visibility 0s 90ms; }
-  .is-opening :is(.envelope__face--out, .envelope__seal) { visibility: hidden; }
-  .is-opening .envelope__face--in { visibility: visible; }
-  /* Sobre abierto un instante (≈ 160 ms); se va el sobre (340–640 ms) antes de que el fondo deje ver la foto: sin pliegues
-     sobre la pareja. Total ≈ 1 s */
-  .is-opening .envelope { opacity: 0; }
-  .opening { transition: opacity 600ms var(--ease-soft) 420ms; }
+  /* Llegada: la foto se revela como una copia que se termina de imprimir, y la tipografía entra como en la portada del sitio */
+  .opening[open] .ed__wash { animation: develop 1.8s var(--ease-out) 120ms backwards; }
+  .opening[open] .ed__photo img { animation: breathe 2.6s var(--ease-out) backwards; }
+  .opening[open] .ed__window::after { animation: appear 900ms var(--ease-out) 900ms backwards; }
+  .opening[open] .ed__kicker { animation: appear 700ms var(--ease-out) 250ms backwards; }
+  .opening[open] .ed__names { animation: unmask 1.1s var(--ease-out) 380ms backwards; }
+  .opening[open] .ed__date { animation: appear 700ms var(--ease-out) 850ms backwards; }
+  .opening[open] .opening__cta { animation: rise 600ms var(--ease-out) 1150ms backwards; }
+  .opening__cta::after { transition: scale 320ms var(--ease-out), opacity 320ms ease; }
+  @media (hover: hover) and (pointer: fine) { .opening__open:hover .opening__cta::after { scale: 1 1; opacity: .8; } }
+  /* Abrir (t = 0): el texto sube 12 px y se disuelve en escalera (40 ms); desde los 80 ms la ventana se agranda hasta ser la
+     portada (1 s, ease-in-out: se mueve en pantalla), la foto se asienta (1,06 → 1) y el velo se levanta. A los 1080 ms el papel
+     se funde (320 ms) sobre la portada, idéntica debajo: la entrada del hero arranca ahí. Total ≈ 1,4 s */
+  /* Si se toca mientras la llegada todavía corre, se cancela y cada propiedad sale desde donde estaba (sin saltos):
+     opacidad, desplazamiento, recorte de los nombres y la subida del llamado */
+  .opening__open > :is(.ed__kicker, .ed__names, .ed__date, .opening__cta) { transition: opacity 380ms var(--ease-out), translate 380ms var(--ease-out), transform 380ms var(--ease-out), clip-path 380ms var(--ease-out); }
+  .is-opening :is(.ed__kicker, .ed__names, .ed__date, .opening__cta), .is-opening .ed__window::after { animation: none; }
+  .is-opening .ed__names { clip-path: inset(-25% -6% -25% -6%); }
+  .opening__open > .ed__names { transition-delay: 40ms; }
+  .opening__open > .ed__date { transition-delay: 80ms; }
+  .is-opening :is(.ed__kicker, .ed__names, .ed__date, .opening__cta) { opacity: 0; translate: 0 -12px; }
+  .ed__window { transition: opacity 240ms var(--ease-out); }
+  .is-opening .ed__window { opacity: 0; }
+  .ed__photo { transition: clip-path 900ms var(--ease-drawer) 60ms; }
+  .is-opening .ed__photo { clip-path: inset(0 0 0 0 round 0 0 0 0); }
+  .ed__photo img { transition: scale 900ms var(--ease-drawer) 60ms; }
+  .ed__wash { transition: opacity 600ms var(--ease-out) 60ms; }
+  .is-opening :is(.ed__photo img, .ed__wash) { animation: none; }
+  .is-opening .ed__photo img { scale: 1; }
+  .is-opening .ed__wash { opacity: 0; }
+  .opening { transition: opacity 300ms var(--ease-out) 760ms; }
 }
 @media (prefers-reduced-motion: reduce) {
   .opening { transition: opacity 300ms var(--ease-out); }
+  .ed__photo img { scale: 1; }
 }
 .opening.is-opening { opacity: 0; pointer-events: none; }
-@keyframes settle-in { from { opacity: 0; translate: 0 14px; } }
+@keyframes develop { from { opacity: 1; } }
+@keyframes breathe { from { scale: 1.12; } }
 
-/* ---------- Motion: apertura de portada + revelado de fotos + microinteracciones ---------- */
+/* ---------- Motion: portada, revelado de encabezados, fotos y cronograma, microinteracciones ---------- */
 @media (prefers-reduced-motion: no-preference) {
   .hero__media img { animation: settle 2.4s var(--ease-out) both; }
   .hero__names { animation: unmask 1.1s var(--ease-out) .3s both; }
   .datelock { animation: appear .45s var(--ease-out) .6s both; }
   .band { animation: appear .4s var(--ease-out) .5s both; }
-  .seal circle { stroke-dasharray: 302; stroke-dashoffset: 302; animation: draw 1.4s var(--ease-in-out) .2s forwards; }
-  /* Fotos: aparecen una vez, con un fundido lento y apenas 12 px de subida (en la galería, que recorta, un leve acercamiento).
-     El efecto va en la imagen, no en el contenedor observado. `translate`/`scale` no pisan el `transform` del hover */
-  .js [data-reveal] > img { opacity: 0; translate: 0 12px; transition: opacity 1.1s var(--ease-soft), translate 1.3s var(--ease-soft), scale 1.6s var(--ease-soft), transform 600ms var(--ease-out); }
-  .js .gallery__item[data-reveal] > img { translate: none; scale: 1.025; }
-  .js [data-reveal].is-in > img { opacity: 1; translate: none; scale: none; }
-  .gallery__item[data-reveal]:nth-child(even) > img { transition-delay: 120ms, 120ms, 120ms, 0ms; }
+
+  /* Encabezados (una vez, al entrar en pantalla): los filetes del rótulo se abren hacia afuera, la línea grande se descubre
+     de abajo hacia arriba (el mismo gesto que los nombres de la portada) y el texto llega después */
+  .js .head[data-reveal] .eyebrow { opacity: 0; transition: opacity 700ms var(--ease-out); }
+  .js .head[data-reveal] .eyebrow::before, .js .head[data-reveal] .eyebrow::after { scale: 0 1; transition: scale 900ms var(--ease-in-out) 150ms; }
+  .js .head[data-reveal] .display { clip-path: inset(-20% -6% 100% -6%); translate: 0 .18em;
+    transition: clip-path 1.1s var(--ease-out) 120ms, translate 1.1s var(--ease-out) 120ms; }
+  .js [data-reveal] .fx, .js .invite[data-reveal] .invite__kicker { opacity: 0; translate: 0 10px; transition: opacity 600ms var(--ease-out) 200ms, translate 600ms var(--ease-out) 200ms; }
+  .js .head[data-reveal] .playlist__icon { opacity: 0; transition: opacity 700ms var(--ease-out); }
+  .js [data-reveal] .rule-v { scale: 1 0; transition: scale 1s var(--ease-in-out); }
+  .js .invite[data-reveal] .invite__kicker { transition-delay: 150ms; }
+  .js .invite[data-reveal] .invite__line { transition-delay: 300ms; }
+  .js .closing__sig[data-reveal] > :not(.rule-v) { opacity: 0; transition: opacity 900ms var(--ease-out) 350ms; }
+  .js [data-reveal].is-in :is(.eyebrow, .fx, .invite__kicker, .playlist__icon), .js .closing__sig[data-reveal].is-in > * { opacity: 1; translate: none; }
+  .js .head[data-reveal].is-in .eyebrow::before, .js .head[data-reveal].is-in .eyebrow::after, .js [data-reveal].is-in .rule-v { scale: none; }
+  .js .head[data-reveal].is-in .display { clip-path: inset(-20% -6% -20% -6%); translate: none; }
+
+  /* Fotos de «Nosotros»: se descubren como una lámina que sube (recorte de abajo hacia arriba) mientras la imagen se asienta.
+     `scale` no pisa el `transform` del hover */
+  .js .gallery__item[data-reveal] { clip-path: inset(100% 0 0 0); transition: clip-path 900ms var(--ease-out); }
+  .js .gallery__item[data-reveal] > img { scale: 1.12; transition: scale 1.4s var(--ease-out), transform 600ms var(--ease-out); }
+  .js .gallery__item[data-reveal].is-in { clip-path: inset(0 0 0 0); }
+  .js .gallery__item[data-reveal].is-in > img { scale: none; }
+  .gallery__item[data-reveal]:nth-child(even) { transition-delay: 140ms; }
+  .gallery__item[data-reveal]:nth-child(even) > img { transition-delay: 140ms, 0ms; }
+
+  .js .tl__item[data-reveal] > * { opacity: 0; translate: 0 10px; transition: opacity 700ms var(--ease-out), translate 700ms var(--ease-out); }
+  .js .tl__item[data-reveal] > .tl__icon { transition-delay: 60ms; }
+  .js .tl__item[data-reveal] > .tl__body { transition-delay: 120ms; }
+  .js .tl__item[data-reveal]::before { scale: 1 0; transition: scale 900ms var(--ease-in-out) 250ms; }
+  .js .tl__item[data-reveal].is-in > * { opacity: 1; translate: none; }
+  .js .tl__item[data-reveal].is-in::before { scale: none; }
   .lightbox[open] { animation: appear 220ms var(--ease-out); }
   .lightbox[open] img { animation: zoom 260ms var(--ease-out); }
   .wall__quote.is-new { animation: rise 300ms var(--ease-out); }
   .form__done:not([hidden]) { animation: rise 280ms var(--ease-out); }
+  /* Agregar una persona al grupo: la fila entra, no aparece de golpe */
+  .member { animation: rise 260ms var(--ease-out); }
 }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .hero, .band { animation: appear .2s ease-out both; }
-  .js [data-reveal] > img { opacity: 0; transition: opacity 200ms ease-out; }
-  .js [data-reveal].is-in > img { opacity: 1; }
+  /* Menos movimiento: solo fundidos, sin desplazamientos ni recortes */
+  .js .gallery__item[data-reveal], .js [data-reveal]:not(.gallery__item) > * { opacity: 0; transition: opacity 300ms ease-out; }
+  .js [data-reveal].is-in, .js [data-reveal].is-in > * { opacity: 1; }
   .fab, .fab.is-shown, .btn, .gallery__item img { transition: none; }
 }
 @keyframes settle { from { transform: scale(1.06); } }
 @keyframes unmask { from { clip-path: inset(-25% -6% 100% -6%); transform: translateY(.18em); } to { clip-path: inset(-25% -6% -25% -6%); transform: none; } }
-@keyframes draw { to { stroke-dashoffset: 0; } }
 @keyframes appear { from { opacity: 0; } }
 @keyframes zoom { from { opacity: 0; transform: scale(.97); } }
 @keyframes rise { from { opacity: 0; transform: translateY(6px); } }
+
+/* ---------- Composiciones editoriales en pantallas anchas ---------- */
+@media (min-width: 768px) {
+  .details .head { grid-template-columns: auto 1px minmax(0, 1fr); column-gap: clamp(2rem, 4vw, 3.5rem); align-items: center; }
+  .details .eyebrow { grid-column: 1 / -1; }
+  .details .head::after { content: ""; grid-row: 2; grid-column: 2; align-self: stretch; background: var(--arena); }
+  .details .display { grid-row: 2; grid-column: 1; }
+  .details .detail__text { grid-row: 2; grid-column: 3; }
+}
+@media (min-width: 1024px) {
+  /* El día: un pliego en dos columnas. A la izquierda el título, la fecha y el calendario (quedan a la vista mientras se
+     recorre el cronograma); a la derecha, el cronograma */
+  .day { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 40rem); column-gap: clamp(3rem, 7vw, 7rem); align-items: start;
+    padding-inline: var(--wide); }
+  .day > .head { grid-column: 1; grid-row: 1; position: sticky; top: 3rem; justify-items: start; text-align: left; }
+  .day > .head .eyebrow::before { display: none; }
+  .day > .timeline, .day > .day__nolink { grid-column: 2; grid-row: 1 / span 2; margin: 0; }
+  .day > .day__cal { grid-column: 1; grid-row: 2; justify-items: start; text-align: left; margin-top: 2rem; position: sticky; top: 16rem; }
+  /* Confirmar: el llamado a la izquierda, el formulario a la derecha */
+  .rsvp { grid-template-columns: minmax(0, 1fr) minmax(0, 34rem); column-gap: clamp(3rem, 7vw, 7rem); align-items: start; justify-items: stretch;
+    padding-inline: var(--wide); }
+  .rsvp > .head { grid-column: 1; grid-row: 1; position: sticky; top: 3rem; justify-items: start; text-align: left; }
+  .rsvp > .head .eyebrow::before { display: none; }
+  .rsvp > :is(.form, .form__done) { grid-column: 2; grid-row: 1; width: 100%; }
+}
