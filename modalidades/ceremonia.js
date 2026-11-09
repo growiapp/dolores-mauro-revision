@@ -18,7 +18,8 @@ export default {
   // Regalos (texto propuesto, a aprobar por Dolores y Mauro). Los datos bancarios salen de comun.js (BANK).
   extra: {
     id: "regalos", title: "Regalos",
-    paragraphs: ["Lo más lindo es que estés con nosotros.", "Si además querés hacernos un regalo, te dejamos los datos de nuestra cuenta."],
+    lead: "Lo más lindo es que estés con nosotros.",
+    paragraphs: ["Y si además querés hacernos un regalo, te dejamos los datos para transferir."],
   },
   afterRsvp: "",
 };

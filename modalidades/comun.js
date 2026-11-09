@@ -13,11 +13,11 @@ export const DESDE_RECEPCION = [
   { time: "12:30", title: "Recepción", place: FINCA, icon: "copas" },
   { time: "13:00", title: "Ceremonia civil", place: "Finca Los Churquis", icon: "anillos" },
   { time: "14:00", title: "Almuerzo", icon: "mesa" },
-  { time: "15:00", title: "Baile", icon: "musica" },
-  { time: "22:00", title: "Fin de la celebración", icon: "luna" },
+  { time: "15:00", title: "A bailar", icon: "musica" },
+  { time: "22:00", title: "Fin del evento", icon: "luna" },
 ];
 
-export const BANK = null;
+export const BANK = [["Alias", "DOLOYMAURO.BODA"], ["CVU", "0000076500000016248061"]];
 
 export function cbuOk(cbu) {
   if (!/^\d{22}$/.test(cbu)) return false;

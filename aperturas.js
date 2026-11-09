@@ -79,6 +79,7 @@
       after(reveal, () => root.classList.remove("sealed")); // entra el nombre de la portada
       after(end, finish);
     };
+    btn.addEventListener("click", () => window.__musica?.abrir()); // la música arranca con este toque (main.js), en A1 y A2
     btn.addEventListener("click", go);
     d.addEventListener("cancel", (e) => { e.preventDefault(); go(); });
     d.addEventListener("touchstart", () => {}, { passive: true }); // iOS: habilita :active

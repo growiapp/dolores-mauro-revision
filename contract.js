@@ -45,6 +45,8 @@ export function validateRsvp(input, { maxPeople = 10 } = {}) {
     members: [],
     people: 0,
     modality: MODALITIES.indexOf(input.modality) >= 0 ? input.modality : "",
+    // Transporte: solo si asisten. "si" | "no"; sin respuesta queda "" (y es un error).
+    transport: "",
   };
   if (letters(data.group) < 2) errors.group = "Escribí el nombre de la familia o del grupo.";
   if (letters(data.name) < 2) errors.name = "Escribí tu nombre y apellido.";
@@ -67,6 +69,8 @@ export function validateRsvp(input, { maxPeople = 10 } = {}) {
     });
     if (!raw.length) errors.members = "Agregá al menos una persona que asista.";
     data.people = data.members.length;
+    data.transport = input.transport === "si" || input.transport === "no" ? input.transport : "";
+    if (!data.transport) errors.transport = "Contanos si van a necesitar transporte.";
   }
   return { ok: Object.keys(errors).length === 0, errors, data };
 }

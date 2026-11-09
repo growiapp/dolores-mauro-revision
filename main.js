@@ -92,25 +92,51 @@ if (typeof document !== "undefined") {
       b.firstChild.textContent = "Sugerir canciones";
       $(".playlist__text").textContent = "Contanos qué canciones te gustaría escuchar ese día: las vamos a tener en cuenta para la playlist.";
     } else if (!canAdd) {
-      $("#playlist-title").textContent = "La música del casamiento";
-      $(".playlist__text").textContent = "Escuchá la playlist del casamiento.";
+      // Solo escucha: el título y el texto del HTML ya son los de esta versión (nunca se ofrece «sumar» sin poder hacerlo)
     } else if (music.platform) Object.assign($(".playlist__note"), { textContent: `Para sumar canciones necesitás una cuenta de ${music.platform}.`, hidden: false });
     $("#playlist").removeAttribute("data-pending");
+    // Reproductor oficial (portada y canciones) para una playlist de Spotify. Se crea al acercarse a la sección
+    const id = canListen && /^https:\/\/open\.spotify\.com\/playlist\/([A-Za-z0-9]{22})(?:[?#].*)?$/.exec(music.listenUrl)?.[1];
+    const box = $("[data-slot=player]");
+    if (id && box) {
+      const load = () => {
+        const f = Object.assign(document.createElement("iframe"), {
+          src: `https://open.spotify.com/embed/playlist/${id}?utm_source=generator`, title: "Playlist de Dolores y Mauro en Spotify",
+          loading: "lazy", allow: "autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture",
+        });
+        f.setAttribute("height", "152");
+        box.replaceChildren(f);
+        box.hidden = false;
+      };
+      new IntersectionObserver((es, o) => { if (es.some((e) => e.isIntersecting)) { o.disconnect(); load(); } }, { rootMargin: "600px 0px" }).observe($("#playlist"));
+    }
   }
+  // Música de la apertura: UNA sola pista. Nunca suena antes de un toque: arranca con «Abrir invitación» (A1, A2 o la clásica
+  // llaman a window.__musica.abrir dentro del mismo clic, que es lo que habilita el sonido) y sigue después. El botón fijo la
+  // pausa y la retoma donde estaba. Si el archivo falla, el botón desaparece y la invitación sigue igual. Con «ahorro de
+  // datos» no arranca sola: queda el botón.
   if (music.src) {
-    const toggle = $(".music-toggle"), audio = new Audio();
-    audio.loop = true;
-    audio.preload = "none";
-    const paint = () => { toggle.setAttribute("aria-pressed", String(!audio.paused)); toggle.classList.toggle("is-playing", !audio.paused); };
+    const toggle = $(".music-toggle"), audio = Object.assign(new Audio(), { loop: true, preload: "none" });
+    let broken = false;
+    const paint = () => {
+      const on = !audio.paused;
+      toggle.setAttribute("aria-pressed", String(on));
+      toggle.setAttribute("aria-label", on ? "Pausar la música" : "Escuchar la música");
+      toggle.classList.toggle("is-playing", on);
+    };
+    const fail = () => { broken = true; audio.pause(); toggle.hidden = true; console.warn("[invitación] No se pudo reproducir la música"); };
     audio.addEventListener("play", paint);
     audio.addEventListener("pause", paint);
-    toggle.hidden = false;
-    // El navegador solo permite sonido después de una acción del invitado: este toque es esa acción.
-    toggle.addEventListener("click", () => {
-      if (!audio.paused) return audio.pause();
+    audio.addEventListener("error", fail);
+    const play = () => {
+      if (broken || !audio.paused) return; // sin reinicios ni dos reproducciones a la vez
       if (!audio.src) audio.src = music.src;
-      audio.play().catch(() => paint());
-    });
+      audio.play().then(paint, (e) => (e && e.name === "NotAllowedError" ? paint() : fail()));
+    };
+    paint();
+    toggle.hidden = false;
+    toggle.addEventListener("click", () => (audio.paused ? play() : audio.pause()));
+    window.__musica = { abrir: () => { if (!navigator.connection?.saveData) play(); }, audio };
   }
 
   // ---------- Persistencia: backend configurado, demostración local o falla cerrada ----------
@@ -213,6 +239,7 @@ if (typeof document !== "undefined") {
 
   // ---------- RSVP por familia o grupo: una fila por cada integrante que asiste; la cantidad se calcula ----------
   const rsvp = $("#rsvp-form");
+  const transportBox = $("[data-field=transport]", rsvp);
   const membersBox = $(".members", rsvp), list = $(".members__list", rsvp), addBtn = $(".members__add", rsvp), countEl = $(".members__count", rsvp);
   const rowTpl = $("#member-row");
   const max = CONFIG.rsvpMaxPeople;
@@ -261,6 +288,8 @@ if (typeof document !== "undefined") {
   const sync = () => {
     const yes = rsvp.elements.attending.value === "si";
     membersBox.hidden = !yes;
+    transportBox.hidden = !yes;
+    transportBox.querySelectorAll("input").forEach((i) => { i.required = yes; });
     // Al elegir "sí" por primera vez, la primera persona es quien completa (se puede cambiar)
     if (yes && !rows().length) addRow($("#r-name").value.trim(), true);
   };
@@ -274,6 +303,7 @@ if (typeof document !== "undefined") {
     const fd = formData(form);
     return {
       group: fd.group, name: fd.name, attending: fd.attending, website: fd.website, modality: mod?.id,
+      transport: fd.attending === "si" ? fd.transport || "" : "",
       members: fd.attending === "si" ? rows().map((li) => ({
         name: $("[name=member-name]", li).value, diet: $("select", li).value, diet_notes: $("[name=member-notes]", li).value,
       })) : [],
@@ -327,47 +357,98 @@ if (typeof document !== "undefined") {
     cal.hidden = false;
   }
 
+  // Copiar al portapapeles: API moderna; si no está o la niegan, el método clásico; si tampoco, false (se selecciona el dato).
+  async function copyText(text) {
+    try { await navigator.clipboard.writeText(text); return true; } catch { /* sigue con el método clásico */ }
+    const ta = Object.assign(document.createElement("textarea"), { value: text, readOnly: true });
+    ta.style.cssText = "position:fixed;top:0;left:0;opacity:0;pointer-events:none";
+    document.body.append(ta);
+    ta.select();
+    let ok = false;
+    try { ok = document.execCommand("copy"); } catch { ok = false; }
+    ta.remove();
+    return ok;
+  }
+  // Datos bancarios: cada dato con su propio botón, aviso «Copiado» y, si el navegador no deja copiar, el dato queda
+  // seleccionado para copiarlo a mano. El aviso se lee también con lector de pantalla.
+  function bankList(bank) {
+    const wrap = Object.assign(document.createElement("div"), { className: "bank-wrap" });
+    const dl = Object.assign(document.createElement("dl"), { className: "bank" });
+    const status = Object.assign(document.createElement("p"), { className: "bank__status" });
+    status.setAttribute("role", "status");
+    for (const [k, v] of bank) {
+      const row = document.createElement("div");
+      const dd = Object.assign(document.createElement("dd"), { textContent: v });
+      const copy = Object.assign(document.createElement("button"), { type: "button", className: "bank__copy", textContent: "Copiar" });
+      copy.setAttribute("aria-label", `Copiar ${k}`);
+      let timer;
+      copy.addEventListener("click", async () => {
+        const ok = await copyText(v);
+        clearTimeout(timer);
+        if (ok) {
+          copy.textContent = "Copiado";
+          copy.classList.add("is-done");
+          status.textContent = `${k} copiado.`;
+        } else {
+          const r = document.createRange();
+          r.selectNodeContents(dd);
+          getSelection().removeAllRanges();
+          getSelection().addRange(r);
+          status.textContent = `No se pudo copiar solo: el ${k.toLowerCase() === "alias" ? "alias" : "número"} quedó seleccionado para que lo copies.`;
+        }
+        timer = setTimeout(() => { copy.textContent = "Copiar"; copy.classList.remove("is-done"); status.textContent = ""; }, 2500);
+      });
+      row.append(Object.assign(document.createElement("dt"), { textContent: k }), dd, copy);
+      dl.append(row);
+    }
+    wrap.append(dl, status);
+    return wrap;
+  }
+
   function renderExtra(x, bank) {
     const box = $("[data-slot=extra]");
     if (!x) return;
     box.id = x.id;
     box.setAttribute("aria-labelledby", `${x.id}-title`);
-    // Mismo encabezado que el resto: rótulo (el título de la sección), una línea grande y el texto
-    const head = Object.assign(document.createElement("div"), { className: "head" });
+    const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
+    // Mismo encabezado que el resto: rótulo (el título de la sección) y una línea grande (el importe o una frase)
+    const head = el("div", "head");
     head.dataset.reveal = "";
-    const h = Object.assign(document.createElement("h2"), { className: "eyebrow", id: `${x.id}-title`, textContent: x.title });
-    const [first, ...rest] = x.paragraphs;
-    const lead = document.createElement("p");
+    const h = el("h2", "eyebrow", x.title);
+    h.id = `${x.id}-title`;
+    head.append(h);
     if (x.price) {
-      lead.className = "display contribution__price";
-      lead.append(x.price, Object.assign(document.createElement("span"), { className: "contribution__note", textContent: x.priceNote }));
-    } else Object.assign(lead, { className: "display contribution__lead", textContent: first });
-    head.append(h, lead);
+      const p = el("p", "display contribution__price", x.price);
+      p.append(el("span", "contribution__note", x.priceNote));
+      head.append(p);
+    }
+    if (x.lead) head.append(el("p", "display contribution__lead", x.lead));
     const parts = [head];
-    const texts = x.price ? x.paragraphs : rest;
-    // La indicación de transferir solo aparece junto a la cuenta: nunca remite a datos que no se muestran
-    for (const t of bank && x.transfer ? [x.transfer, ...texts] : texts) parts.push(Object.assign(document.createElement("p"), { className: "contribution__text", textContent: t }));
-    if (bank) {
-      const dl = document.createElement("dl");
-      dl.className = "bank";
-      for (const [k, v] of bank) {
-        const row = document.createElement("div");
-        const copy = Object.assign(document.createElement("button"), { type: "button", className: "bank__copy", textContent: "Copiar" });
-        copy.setAttribute("aria-label", `Copiar ${k}`);
-        copy.addEventListener("click", () => navigator.clipboard?.writeText(v).then(() => {
-          copy.textContent = "Copiado";
-          setTimeout(() => { copy.textContent = "Copiar"; }, 2000);
-        }, () => {}));
-        row.append(Object.assign(document.createElement("dt"), { textContent: k }), Object.assign(document.createElement("dd"), { textContent: v }), copy);
-        dl.append(row);
-      }
-      parts.push(dl);
-    } else {
+    for (const t of x.paragraphs || []) parts.push(el("p", "contribution__text", t));
+    const pending = () => el("p", "tbd", "Pendiente: datos bancarios de la fuente verificada (bloquea la publicación).");
+    if (x.steps) {
+      // Pasos numerados; el que lleva la cuenta solo la muestra con datos verificados (nunca remite a una cuenta ausente)
+      const ol = el("ol", "steps");
+      ol.dataset.reveal = "";
+      x.steps.forEach((s, i) => {
+        const li = el("li", "steps__item fx");
+        li.append(el("span", "steps__n", String(i + 1)));
+        const body = el("div", "steps__body");
+        body.append(el("h3", "steps__title", s.title));
+        if (!s.bank || bank) body.append(el("p", "steps__text", s.text));
+        if (s.link) body.append(Object.assign(el("a", "steps__link", s.link.label), { href: s.link.href }));
+        if (s.bank) body.append(bank ? bankList(bank) : pending());
+        li.append(body);
+        ol.append(li);
+      });
+      parts.push(ol);
+    } else if (bank) parts.push(bankList(bank));
+    else {
       // Sin datos verificados no hay bloque bancario; una sección sin importe tampoco se muestra en la vista pública.
-      // BLOQUEA LA PUBLICACIÓN: ver deliverables/evolucion-v2/pendientes.md
-      parts.push(Object.assign(document.createElement("p"), { className: "tbd", textContent: "Pendiente: datos bancarios de la fuente verificada (bloquea la publicación)." }));
+      parts.push(pending());
       if (!x.price) box.toggleAttribute("data-pending", true);
     }
+    if (x.closing) parts.push(el("p", "contribution__closing", x.closing));
     box.replaceChildren(...parts);
     box.hidden = false;
     observe(box);

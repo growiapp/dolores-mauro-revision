@@ -168,6 +168,10 @@ section { padding: clamp(4rem, 11vw, 8rem) var(--gutter); }
 .details .display { font-size: clamp(2.6rem, 11vw, 4.25rem); }
 .details .detail__text { max-width: 30ch; text-wrap: pretty; }
 .detail__text { max-width: 32ch; color: var(--tinta-suave); text-wrap: balance; }
+.detail__copy { display: grid; gap: .55rem; }
+.detail__copy p { margin: 0; }
+/* La segunda línea, en voz baja: precisa sin sonar a regla */
+.detail__note { font: 400 1.125rem/1.45 var(--serif); font-style: italic; font-variation-settings: var(--text-axes); color: var(--castano); text-wrap: balance; }
 
 /* ---------- Sección propia de cada modalidad (rótulo, importe o frase, texto y datos bancarios) ---------- */
 .contribution { display: grid; justify-items: center; gap: 1rem; text-align: center; }
@@ -176,6 +180,24 @@ section { padding: clamp(4rem, 11vw, 8rem) var(--gutter); }
 .contribution__note { font: 500 .75rem/1 var(--sans); letter-spacing: .3em; margin-right: -.3em; text-transform: uppercase; color: var(--castano); }
 .contribution__lead { font-size: clamp(2rem, 8vw, 3.25rem); line-height: 1.08; max-width: 16ch; }
 .contribution__text { max-width: 36ch; color: var(--tinta-suave); text-wrap: balance; }
+/* Pasos numerados de la sección propia de una modalidad (vienen de su módulo; el que corresponde lleva la cuenta) */
+.steps { list-style: none; width: min(100%, 34rem); margin: 1.25rem 0 0; padding: 0; display: grid; gap: 0; text-align: left; counter-reset: none; }
+.steps__item { display: grid; grid-template-columns: 2.6rem minmax(0, 1fr); column-gap: 1rem; padding: 1.4rem 0; border-top: var(--hair); }
+.steps__item:last-child { border-bottom: var(--hair); }
+.steps__n { display: grid; place-items: center; width: 2.6rem; aspect-ratio: 1; border: 1px solid var(--arena); border-radius: 50%;
+  font: 300 1.25rem/1 var(--serif); font-variation-settings: var(--display); color: var(--oliva); font-variant-numeric: lining-nums; }
+.steps__title { margin: .35rem 0 0; font: 400 1.375rem/1.2 var(--serif); font-variation-settings: var(--text-axes); color: var(--tinta); }
+.steps__text { margin: .45rem 0 0; color: var(--tinta-suave); text-wrap: pretty; }
+.steps__link { display: inline-flex; align-items: center; min-height: 44px; color: var(--oliva); font: 600 .875rem/1 var(--sans); text-underline-offset: 3px; }
+.steps .bank-wrap { margin-top: .9rem; }
+/* En los pasos (columna angosta): el botón va en la línea del rótulo y el dato ocupa todo el ancho, sin cortarse */
+.steps .bank > div { grid-template-areas: "dt copy" "dd dd"; align-items: center; }
+.steps .bank dt { grid-area: dt; }
+.steps .bank dd { grid-area: dd; margin-top: .45rem; white-space: nowrap; overflow-wrap: normal; }
+.steps .bank__copy { grid-area: copy; grid-row: auto; grid-column: auto; }
+.contribution__closing { max-width: 34ch; margin: 1.25rem 0 0; font: 400 1.125rem/1.5 var(--serif); font-style: italic; color: var(--tinta-suave); text-wrap: balance; }
+.bank-wrap { width: min(100%, 28rem); }
+.bank__status { min-height: 1.4em; margin: .5rem 0 0; font-size: .875rem; color: var(--oliva); text-align: left; }
 .bank { width: min(100%, 28rem); margin: 1rem 0 0; display: grid; border-top: var(--hair); text-align: left; }
 .bank > div { display: grid; grid-template-columns: 1fr auto; column-gap: 1rem; padding: .8rem 0; border-bottom: var(--hair); }
 .bank dt { font: 600 .75rem/1.2 var(--sans); letter-spacing: .16em; text-transform: uppercase; color: var(--oliva); }
@@ -295,6 +317,12 @@ input[type=radio], input[type=checkbox] { width: 1.25rem; height: 1.25rem; margi
 .playlist__icon svg { display: block; width: 2rem; height: 2rem; fill: none; stroke: currentColor; stroke-width: 1.1; stroke-linecap: round; stroke-linejoin: round; }
 .playlist__text { max-width: 34ch; color: var(--tinta-suave); text-wrap: balance; }
 .playlist__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: .75rem; margin-top: .75rem; }
+/* Reproductor oficial: la portada y las canciones; marco fino como las fotos, sin sombras */
+.playlist__player { width: min(100%, 34rem); margin: clamp(2rem, 5vw, 3rem) auto 0; border-radius: 14px; overflow: hidden; background: var(--arena); }
+.playlist__player iframe { display: block; width: 100%; height: 152px; border: 0; }
+.playlist__foot { display: grid; justify-items: center; gap: .5rem; margin-top: clamp(1.75rem, 4vw, 2.5rem); text-align: center; }
+.playlist__ask { margin: 0; font: 400 1.25rem/1.4 var(--serif); font-style: italic; color: var(--tinta); text-wrap: balance; }
+.playlist__ask a { color: var(--oliva); text-underline-offset: 3px; }
 .playlist__note { font-size: .875rem; color: var(--tinta-suave); }
 .music-toggle { position: fixed; z-index: 11; top: calc(env(safe-area-inset-top) + .75rem); right: .75rem; display: grid; place-items: center;
   width: 44px; height: 44px; border: 1px solid rgb(70 61 53 / .25); border-radius: 50%; background: rgb(245 240 232 / .9); color: var(--tinta); cursor: pointer; }
@@ -531,12 +559,18 @@ body:has(.lightbox[open]) .fab { visibility: hidden; }
 
   /* Fotos de «Nosotros»: se descubren como una lámina que sube (recorte de abajo hacia arriba) mientras la imagen se asienta.
      `scale` no pisa el `transform` del hover */
-  .js .gallery__item[data-reveal] { clip-path: inset(100% 0 0 0); transition: clip-path 900ms var(--ease-out); }
-  .js .gallery__item[data-reveal] > img { scale: 1.12; transition: scale 1.4s var(--ease-out), transform 600ms var(--ease-out); }
-  .js .gallery__item[data-reveal].is-in { clip-path: inset(0 0 0 0); }
-  .js .gallery__item[data-reveal].is-in > img { scale: none; }
-  .gallery__item[data-reveal]:nth-child(even) { transition-delay: 140ms; }
-  .gallery__item[data-reveal]:nth-child(even) > img { transition-delay: 140ms, 0ms; }
+  /* Nosotros: dos movimientos según la foto, no el mismo ocho veces (y una sola vez cada uno).
+     Horizontales: se abren desde el centro, como un telón, y la imagen se asienta. Verticales: suben apenas y aparecen;
+     la segunda de cada par, un poco después (lectura de izquierda a derecha). Sin rebotes ni recortes desde abajo */
+  .js .gallery__item--h[data-reveal] { clip-path: inset(0 12% 0 12%); opacity: 0; transition: clip-path 900ms var(--ease-out), opacity 450ms var(--ease-out); }
+  .js .gallery__item--h[data-reveal] > img { scale: 1.06; transition: scale 1.2s var(--ease-out), transform 600ms var(--ease-out); }
+  .js .gallery__item--h[data-reveal].is-in { clip-path: inset(0); opacity: 1; }
+  .js .gallery__item--h[data-reveal].is-in > img { scale: none; }
+  .js .gallery__item--v[data-reveal] { opacity: 0; translate: 0 20px; transition: opacity 650ms var(--ease-out), translate 750ms var(--ease-out); }
+  .js .gallery__item--v[data-reveal].is-in { opacity: 1; translate: none; }
+  .js .gallery__item--v[data-reveal] + .gallery__item--v[data-reveal] { transition-delay: 110ms; }
+  /* Pasos numerados: entran escalonados */
+  .js .steps[data-reveal] .steps__item:nth-child(2) { transition-delay: 320ms; }
 
   .js .tl__item[data-reveal] > * { opacity: 0; translate: 0 10px; transition: opacity 700ms var(--ease-out), translate 700ms var(--ease-out); }
   .js .tl__item[data-reveal] > .tl__icon { transition-delay: 60ms; }
@@ -571,7 +605,7 @@ body:has(.lightbox[open]) .fab { visibility: hidden; }
   .details .eyebrow { grid-column: 1 / -1; }
   .details .head::after { content: ""; grid-row: 2; grid-column: 2; align-self: stretch; background: var(--arena); }
   .details .display { grid-row: 2; grid-column: 1; }
-  .details .detail__text { grid-row: 2; grid-column: 3; }
+  .details .detail__copy { grid-row: 2; grid-column: 3; }
 }
 @media (min-width: 1024px) {
   /* El día: un pliego en dos columnas. A la izquierda el título, la fecha y el calendario (quedan a la vista mientras se

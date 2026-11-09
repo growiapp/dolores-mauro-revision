@@ -13,9 +13,12 @@ export default {
   extra: {
     id: "tarjeta", title: "Tarjeta",
     price: "$180.000", priceNote: "por persona",
-    // La línea de transferencia solo se muestra junto a los datos bancarios (main.js): nunca remite a una cuenta ausente
-    transfer: "Podés abonarla por transferencia a la cuenta de abajo.",
-    paragraphs: ["Confirmar la asistencia y abonar la tarjeta son pasos separados."],
+    // Dos pasos, en orden. El segundo lleva los datos bancarios (main.js); sin datos verificados, no se muestra ninguna cuenta
+    steps: [
+      { title: "Confirmá tu asistencia", text: "Contanos quiénes vienen en el formulario de más abajo.", link: { href: "#confirmar", label: "Ir al formulario" } },
+      { title: "Transferí la tarjeta", text: "$180.000 por cada persona que viene, a esta cuenta:", bank: true },
+    ],
+    closing: "Son dos pasos distintos: cuando confirmes, acordate también de transferir.",
   },
-  afterRsvp: "Confirmar la asistencia y abonar la tarjeta son pasos separados.",
+  afterRsvp: "Cuando puedas, transferí la tarjeta: la confirmación no incluye el pago.",
 };

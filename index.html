@@ -89,6 +89,7 @@
       const open = () => { if (d.classList.contains("is-opening")) return; fit(); d.classList.add("is-opening"); setTimeout(() => started || finish(), 1600); };
       d.addEventListener("transitionstart", (e) => { if (e.target !== d || started) return; started = true; reveal(); setTimeout(finish, 1200); });
       d.addEventListener("transitionend", (e) => e.target === d && e.propertyName === "opacity" && finish());
+      btn.addEventListener("click", () => window.__musica?.abrir()); // la música arranca con este toque (main.js)
       btn.addEventListener("click", open);
       d.addEventListener("touchstart", () => {}, { passive: true }); // iOS: sin un manejador táctil, Safari no aplica :active
       d.addEventListener("cancel", (e) => { e.preventDefault(); open(); });
@@ -198,8 +199,11 @@
     <section id="detalles" class="details" aria-labelledby="details-title">
       <div class="head" data-reveal>
         <h2 id="details-title" class="eyebrow">Dress code</h2>
-        <p class="display">Elegante sport</p>
-        <p class="detail__text fx">Algo lindo y cómodo para disfrutar el día de principio a fin.</p>
+        <p class="display">Elegante relajado</p>
+        <div class="detail__copy fx">
+          <p class="detail__text">Queremos verlos arreglados, pero cómodos para disfrutar y bailar.</p>
+          <p class="detail__note">Un look cuidado, sin necesidad de etiqueta.</p>
+        </div>
       </div>
     </section>
 
@@ -208,7 +212,6 @@
 
     <section id="nosotros" class="gallery" aria-labelledby="gallery-title">
       <header class="head" data-reveal>
-        <p class="eyebrow">Dolores y Mauro</p>
         <h2 id="gallery-title" class="display">Nosotros <svg class="gallery__heart" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 20s-7.4-4.5-9-9.2C1.9 7.6 3.8 4.6 6.9 4.3c2-.2 3.7.9 4.6 2.6l.5.9.5-.9c.9-1.7 2.6-2.8 4.6-2.6 3.1.3 5 3.3 3.9 6.5C19.4 15.5 12 20 12 20z"/></svg></h2>
       </header>
       <!-- Fotos elegidas por Dolores y Mauro (la 132 es la portada). Horizontal y vertical alternadas, de a cuatro -->
@@ -312,6 +315,16 @@
             <p class="field__err" id="r-members-err"></p>
           </fieldset>
 
+          <!-- Transporte (pedido de Dolores): una respuesta por grupo, solo si vienen. Se guarda en la planilla (columna
+               Transporte). Sin recorridos, horarios ni puntos de salida: eso lo definen los novios -->
+          <fieldset class="field choice" data-field="transport" aria-describedby="r-transport-hint r-transport-err" hidden>
+            <legend>¿Van a necesitar transporte?</legend>
+            <p class="field__hint" id="r-transport-hint">Nos ayuda a organizarnos para ese día.</p>
+            <label><input type="radio" name="transport" value="si"> Sí, vamos a necesitar</label>
+            <label><input type="radio" name="transport" value="no"> No, vamos por nuestra cuenta</label>
+            <p class="field__err" id="r-transport-err"></p>
+          </fieldset>
+
           <div class="hp" aria-hidden="true"><label>No completar <input name="website" tabindex="-1" autocomplete="off"></label></div>
 
           <button class="btn btn--solid" type="submit">Enviar confirmación</button>
@@ -356,9 +369,14 @@
       <div class="head" data-reveal>
         <span class="playlist__icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M9 18.5V5.2l10-2v12.6"/><circle cx="6.8" cy="18.5" r="2.3"/><circle cx="16.8" cy="15.8" r="2.3"/><path d="M9 9.2l10-2"/></svg></span>
         <p class="eyebrow">Playlist</p>
-        <h2 id="playlist-title" class="display">Que no falte tu canción</h2>
-        <p class="playlist__text fx">Sumá a la playlist del casamiento las canciones que te gustaría escuchar ese día.</p>
-        <div class="playlist__actions fx">
+        <h2 id="playlist-title" class="display">La banda sonora de nuestro día</h2>
+        <p class="playlist__text fx">Juntamos las canciones que nos acompañan. Dale play y andá entrando en clima.</p>
+      </div>
+      <!-- Reproductor oficial de Spotify (portada y canciones). Se carga solo al acercarse; si no carga, queda el botón -->
+      <div class="playlist__player" data-slot="player" hidden></div>
+      <div class="playlist__foot">
+        <p class="playlist__ask">¿Qué canción no puede faltar? <a href="#mensajes">Contanos en los mensajes</a>.</p>
+        <div class="playlist__actions">
           <a class="btn btn--solid playlist__add" href="#" target="_blank" rel="noopener" hidden>Sumar canciones<span class="sr-only"> (se abre en otra pestaña)</span></a>
           <a class="btn btn--line playlist__listen" href="#" target="_blank" rel="noopener" hidden>Escuchar nuestra playlist<span class="sr-only"> (se abre en otra pestaña)</span></a>
         </div>
