@@ -350,7 +350,7 @@
     </section>
 
     <!-- Playlist del casamiento: los invitados suman canciones en la plataforma, no en el formulario. Dos enlaces separados en
-         config.js (music.listenUrl y music.collaborateUrl, este con su vencimiento). Sin ninguno vigente, la sección no aparece
+         config.js (music.suggestUrl, music.listenUrl y music.collaborateUrl, este con su vencimiento). Sin ninguno vigente, la sección no aparece
          en la vista pública; main.js decide textos y botones según lo que haya -->
     <section id="playlist" class="playlist" aria-labelledby="playlist-title" data-pending>
       <div class="head" data-reveal>
@@ -360,10 +360,10 @@
         <p class="playlist__text fx">Sumá a la playlist del casamiento las canciones que te gustaría escuchar ese día.</p>
         <div class="playlist__actions fx">
           <a class="btn btn--solid playlist__add" href="#" target="_blank" rel="noopener" hidden>Sumar canciones<span class="sr-only"> (se abre en otra pestaña)</span></a>
-          <a class="btn btn--line playlist__listen" href="#" target="_blank" rel="noopener" hidden>Escuchar la playlist<span class="sr-only"> (se abre en otra pestaña)</span></a>
+          <a class="btn btn--line playlist__listen" href="#" target="_blank" rel="noopener" hidden>Escuchar nuestra playlist<span class="sr-only"> (se abre en otra pestaña)</span></a>
         </div>
         <p class="playlist__note" hidden></p>
-        <p class="tbd">Pendiente: enlace de colaboración vigente (Spotify: vale 7 días) y, si se quiere, el de escucha.</p>
+        <p class="tbd">Pendiente: formulario para sugerir canciones (recomendado) o enlace de colaboración (Spotify: vale 7 días) y, si se quiere, el de escucha.</p>
       </div>
     </section>
 
@@ -401,10 +401,11 @@
             <p class="field__count" id="m-text-count"></p>
             <p class="field__err" id="m-text-err"></p>
           </div>
-          <p class="field__hint" id="m-publish-note">Tu nombre y tu mensaje podrán verse en esta página después de que Dolores y Mauro lo aprueben.</p>
+          <p class="field__hint" id="m-publish-note">Tu nombre y tu mensaje podrán aparecer en la invitación después de que los revisemos.</p>
           <div class="hp" aria-hidden="true"><label>No completar <input name="website" tabindex="-1" autocomplete="off"></label></div>
-          <!-- El consentimiento para publicar es esta acción explícita: el botón envía publish=on (contrato sin cambios) -->
-          <button class="btn btn--solid" type="submit" name="publish" value="on" aria-describedby="m-publish-note">Enviar para publicar</button>
+          <!-- Sin elección de privacidad: el aviso de arriba informa que se puede publicar y el botón envía publish=on (contrato
+               sin cambios). El servidor lo guarda pendiente; solo se publica si Dolores o Mauro lo aprueban. -->
+          <button class="btn btn--solid" type="submit" name="publish" value="on" aria-describedby="m-publish-note">Enviar mensaje</button>
           <p class="form__status" role="status"></p>
         </fieldset>
       </form>

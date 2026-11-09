@@ -81,10 +81,17 @@ if (typeof document !== "undefined") {
   const https = (u) => typeof u === "string" && /^https:\/\/\S+$/.test(u);
   const canAdd = https(music.collaborateUrl) && Date.parse(music.collaborateUntil) > Date.now();
   const canListen = https(music.listenUrl);
-  if (canAdd || canListen) {
+  // Formulario de sugerencias (p. ej. Google Forms): no pide cuenta ni vence; los novios curan y suman las canciones.
+  // Si además hay colaboración vigente, manda la colaboración; al vencer, queda el formulario.
+  const canSuggest = !canAdd && https(music.suggestUrl);
+  if (canAdd || canListen || canSuggest) {
     if (canAdd) Object.assign($(".playlist__add"), { href: music.collaborateUrl, hidden: false });
     if (canListen) Object.assign($(".playlist__listen"), { href: music.listenUrl, hidden: false });
-    if (!canAdd) {
+    if (canSuggest) {
+      const b = Object.assign($(".playlist__add"), { href: music.suggestUrl, hidden: false });
+      b.firstChild.textContent = "Sugerir canciones";
+      $(".playlist__text").textContent = "Contanos qué canciones te gustaría escuchar ese día: las vamos a tener en cuenta para la playlist.";
+    } else if (!canAdd) {
       $("#playlist-title").textContent = "La música del casamiento";
       $(".playlist__text").textContent = "Escuchá la playlist del casamiento.";
     } else if (music.platform) Object.assign($(".playlist__note"), { textContent: `Para sumar canciones necesitás una cuenta de ${music.platform}.`, hidden: false });

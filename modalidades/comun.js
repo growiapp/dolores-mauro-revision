@@ -1,8 +1,4 @@
-// Contenido que comparten las dos modalidades de invitación. Nada exclusivo de una modalidad va acá (tampoco en los
-// comentarios): eso vive en el módulo de cada enlace, y cada página carga solo el suyo.
-// No es un control de acceso: el enlace separa la experiencia, no protege la información.
 
-// Íconos de línea para el cronograma (24×24, trazo del color del texto)
 export const svg = (d) => `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">${d}</svg>`;
 export const ICONS = {
   copas: svg('<path d="M6.2 3.5h4.6l-.4 4.6a2 2 0 0 1-3.8 0zM8.5 10.3V18M6.3 18h4.4M13.2 3.5h4.6l-.4 4.6a2 2 0 0 1-3.8 0zM15.5 10.3V18M13.3 18h4.4M11.2 5.6l1.6-.6"/>'),
@@ -13,7 +9,6 @@ export const ICONS = {
 };
 
 const FINCA = "Finca Los Churquis, Volcán";
-// Desde la recepción hasta el final: lo mismo para todos los invitados
 export const DESDE_RECEPCION = [
   { time: "12:30", title: "Recepción", place: FINCA, icon: "copas" },
   { time: "13:00", title: "Ceremonia civil", place: "Finca Los Churquis", icon: "anillos" },
@@ -22,21 +17,22 @@ export const DESDE_RECEPCION = [
   { time: "22:00", title: "Fin de la celebración", icon: "luna" },
 ];
 
-// Datos bancarios: la misma cuenta para las dos modalidades.
-// PENDIENTE: completarlos SOLO desde la fuente verificada que entreguen Dolores y Mauro (ver deliverables/evolucion-v2).
-// Forma: [["Titular", "…"], ["Banco", "…"], ["CBU", "…"], ["Alias", "…"]]. Mientras sea null, el sitio no muestra datos.
 export const BANK = null;
 
-// Validación al incorporar los datos: titular, banco y al menos CBU o alias, sin campos vacíos; CBU de 22 dígitos;
-// alias de 6 a 20 caracteres (letras, números, punto y guion). Si algo no cierra, el sitio no muestra NINGÚN dato bancario
-// (nunca datos incompletos) y lo avisa en la consola.
+export function cbuOk(cbu) {
+  if (!/^\d{22}$/.test(cbu)) return false;
+  const check = (digits, w) => (10 - ([...digits].reduce((s, d, i) => s + d * w[i % w.length], 0) % 10)) % 10;
+  return check(cbu.slice(0, 7), [7, 1, 3, 9]) === +cbu[7] && check(cbu.slice(8, 21), [3, 9, 7, 1]) === +cbu[21];
+}
+
 export function bankRows(bank) {
   if (bank == null) return null;
   const rows = Array.isArray(bank) ? bank : [];
   const get = (k) => rows.find((r) => r[0] === k)?.[1];
   const ok = rows.length > 0 && rows.every((r) => Array.isArray(r) && r.length === 2 && r.every((v) => typeof v === "string" && v.trim()))
-    && get("Titular") && get("Banco") && (get("CBU") || get("Alias"))
-    && (get("CBU") === undefined || /^\d{22}$/.test(get("CBU")))
+    && (get("CBU") || get("CVU") || get("Alias"))
+    && (get("CBU") === undefined || cbuOk(get("CBU")))
+    && (get("CVU") === undefined || (cbuOk(get("CVU")) && /^000\d{4}\d0/.test(get("CVU"))))
     && (get("Alias") === undefined || /^[A-Za-z0-9.-]{6,20}$/.test(get("Alias")));
   if (!ok) console.error("[invitación] Datos bancarios incompletos o con formato inválido: no se muestran");
   return ok ? rows : null;
