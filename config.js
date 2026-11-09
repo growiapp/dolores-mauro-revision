@@ -10,5 +10,5 @@ export const CONFIG = {
 
   rotateEvery: 8000,
 
-  music: { src: null, listenUrl: "https://open.spotify.com/playlist/4Cs5jVekV4gS03QL88cIHg", collaborateUrl: null, collaborateUntil: null, platform: "Spotify", suggestUrl: null },
+  music: { src: null, listenUrl: "https://open.spotify.com/playlist/4Cs5jVekV4gS03QL88cIHg", collaborateUrl: "https://open.spotify.com/playlist/4Cs5jVekV4gS03QL88cIHg?si=AaJmz9IBQaGhYgwIbMUtEw&utm_source=copy-link&pt=2a5ba5b58d50fc23a58424732c2ae78a&pi=PXByfvXPQCG4r", collaborateUntil: "2026-11-16T21:54:14.030Z", platform: "Spotify", suggestUrl: null },
 };
