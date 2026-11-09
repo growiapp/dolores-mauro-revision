@@ -317,13 +317,13 @@ input[type=radio], input[type=checkbox] { width: 1.25rem; height: 1.25rem; margi
 .playlist__icon svg { display: block; width: 2rem; height: 2rem; fill: none; stroke: currentColor; stroke-width: 1.1; stroke-linecap: round; stroke-linejoin: round; }
 .playlist__text { max-width: 34ch; color: var(--tinta-suave); text-wrap: balance; }
 .playlist__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: .75rem; margin-top: .75rem; }
+/* En el celular, las dos acciones apiladas y del mismo ancho */
+@media (max-width: 34rem) { .playlist__actions { flex-direction: column; align-items: stretch; width: min(100%, 20rem); } }
 /* Reproductor oficial: la portada y las canciones; marco fino como las fotos, sin sombras */
 .playlist__player { width: min(100%, 34rem); margin: clamp(2rem, 5vw, 3rem) auto 0; border-radius: 14px; overflow: hidden; background: var(--arena); }
 .playlist__player iframe { display: block; width: 100%; height: 152px; border: 0; }
 .playlist__foot { display: grid; justify-items: center; gap: .5rem; margin-top: clamp(1.75rem, 4vw, 2.5rem); text-align: center; }
-.playlist__ask { margin: 0; font: 400 1.25rem/1.4 var(--serif); font-style: italic; color: var(--tinta); text-wrap: balance; }
-.playlist__ask a { color: var(--oliva); text-underline-offset: 3px; }
-.playlist__note { font-size: .875rem; color: var(--tinta-suave); }
+.playlist__note { max-width: 44ch; margin: .5rem 0 0; font-size: .875rem; color: var(--tinta-suave); text-wrap: balance; }
 .music-toggle { position: fixed; z-index: 11; top: calc(env(safe-area-inset-top) + .75rem); right: .75rem; display: grid; place-items: center;
   width: 44px; height: 44px; border: 1px solid rgb(70 61 53 / .25); border-radius: 50%; background: rgb(245 240 232 / .9); color: var(--tinta); cursor: pointer; }
 .music-toggle svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
@@ -557,9 +557,7 @@ body:has(.lightbox[open]) .fab { visibility: hidden; }
   .js .head[data-reveal].is-in .eyebrow::before, .js .head[data-reveal].is-in .eyebrow::after, .js [data-reveal].is-in .rule-v { scale: none; }
   .js .head[data-reveal].is-in .display { clip-path: inset(-20% -6% -20% -6%); translate: none; }
 
-  /* Fotos de «Nosotros»: se descubren como una lámina que sube (recorte de abajo hacia arriba) mientras la imagen se asienta.
-     `scale` no pisa el `transform` del hover */
-  /* Nosotros: dos movimientos según la foto, no el mismo ocho veces (y una sola vez cada uno).
+  /* Nosotros (`scale` no pisa el `transform` del hover): dos movimientos según la foto, no el mismo ocho veces (y una sola vez cada uno).
      Horizontales: se abren desde el centro, como un telón, y la imagen se asienta. Verticales: suben apenas y aparecen;
      la segunda de cada par, un poco después (lectura de izquierda a derecha). Sin rebotes ni recortes desde abajo */
   .js .gallery__item--h[data-reveal] { clip-path: inset(0 12% 0 12%); opacity: 0; transition: clip-path 900ms var(--ease-out), opacity 450ms var(--ease-out); }

@@ -85,7 +85,12 @@ if (typeof document !== "undefined") {
   // Si además hay colaboración vigente, manda la colaboración; al vencer, queda el formulario.
   const canSuggest = !canAdd && https(music.suggestUrl);
   if (canAdd || canListen || canSuggest) {
-    if (canAdd) Object.assign($(".playlist__add"), { href: music.collaborateUrl, hidden: false });
+    if (canAdd) {
+      const add = Object.assign($(".playlist__add"), { href: music.collaborateUrl, hidden: false });
+      $(".playlist__text").textContent = "Hay canciones que no pueden faltar en una fiesta. ¡Sumá la tuya y armemos juntos la playlist!";
+      // Si vence con la página abierta: no se abre un enlace vencido, el botón desaparece
+      add.addEventListener("click", (e) => { if (Date.parse(music.collaborateUntil) <= Date.now()) { e.preventDefault(); add.hidden = true; } });
+    }
     if (canListen) Object.assign($(".playlist__listen"), { href: music.listenUrl, hidden: false });
     if (canSuggest) {
       const b = Object.assign($(".playlist__add"), { href: music.suggestUrl, hidden: false });
@@ -93,7 +98,9 @@ if (typeof document !== "undefined") {
       $(".playlist__text").textContent = "Contanos qué canciones te gustaría escuchar ese día: las vamos a tener en cuenta para la playlist.";
     } else if (!canAdd) {
       // Solo escucha: el título y el texto del HTML ya son los de esta versión (nunca se ofrece «sumar» sin poder hacerlo)
-    } else if (music.platform) Object.assign($(".playlist__note"), { textContent: `Para sumar canciones necesitás una cuenta de ${music.platform}.`, hidden: false });
+    } else Object.assign($(".playlist__note"), { hidden: false, textContent: music.platform
+      ? `Quienes se suman como colaboradores pueden agregar, quitar y reordenar canciones en ${music.platform}. Necesitás una cuenta de ${music.platform}.`
+      : "Quienes se suman como colaboradores pueden agregar, quitar y reordenar canciones." });
     $("#playlist").removeAttribute("data-pending");
     // Reproductor oficial (portada y canciones) para una playlist de Spotify. Se crea al acercarse a la sección
     const id = canListen && /^https:\/\/open\.spotify\.com\/playlist\/([A-Za-z0-9]{22})(?:[?#].*)?$/.exec(music.listenUrl)?.[1];
