@@ -383,7 +383,7 @@ if (typeof document !== "undefined") {
     observe($("#el-dia"));
     const cal = $("[data-slot=cal]");
     $("a", cal).href = m.ics;
-    if (m.venue) $(".note", cal).textContent = "Agendá el brindis con su horario y el lugar.";
+    if (m.venue) $(".note", cal).textContent = "Guardá el horario y la ubicación para tenerlos a mano.";
     cal.hidden = false;
   }
 

@@ -26,7 +26,7 @@
   <!-- Modo revisión (?revision): vista para la pareja, con una aclaración general y datos de ejemplo. La vista pública no los muestra.
        Los datos pendientes están en deliverables/evolucion-v2/pendientes.md -->
   <script>if (new URLSearchParams(location.search).has("revision")) document.documentElement.classList.add("review");</script>
-  <link rel="stylesheet" href="styles.css?v=20261110e">
+  <link rel="stylesheet" href="styles.css?v=20261110j">
   <link rel="stylesheet" href="aperturas.css?v=20261109a"> <!-- revisión de aperturas (?apertura=a1|a2) -->
 </head>
 <body>
@@ -173,7 +173,6 @@
 
   <main>
     <section class="invite" aria-label="Invitación" data-reveal>
-      <span class="rule-v" aria-hidden="true"></span>
       <p class="invite__kicker">¡Nos casamos!</p>
       <p class="invite__line fx">Y queremos que seas parte de este día</p>
     </section>
@@ -214,38 +213,36 @@
         <h2 id="details-title" class="eyebrow">Dress code</h2>
         <p class="display">Elegante relajado</p>
         <div class="detail__copy fx">
-          <p class="detail__text">Queremos verlos arreglados, pero cómodos para disfrutar y bailar.</p>
+          <p class="detail__text">Queremos verlos de fiesta: arreglados y cómodos para disfrutar y bailar.</p>
           <p class="detail__note">Un look cuidado, sin necesidad de etiqueta.</p>
           <p class="detail__text detail__coat">A la noche refresca, así que traé un abrigo.</p>
         </div>
       </div>
-      <!-- Ideas de looks (pedido de Dolores): cuatro fotos de Unsplash, «Uso gratuito bajo la Licencia Unsplash» (se pueden
-           publicar; no exigen atribución). Las referencias de Pinterest de Dolores no se publican. Fotos: Reistor (dziVRZYOFpI),
-           Samuel Cruz (t7xDQNwwEXk), Icons8 Team (6LZuSzSwso0) y Ramy Mamdouh (I_DMyDtcz2k), recortadas a 3:4.
-           Ver deliverables/evolucion-v2/v4.md -->
+      <!-- Ideas de looks: las nueve imágenes que eligieron Dolores y Mauro (originales en _local/referencias-dresscode/01..09,
+           derivados WebP con tools/build_images.py como look-NN, mismo número que el archivo). Sin pies de foto: el alt describe
+           cada look. Orden estricto de los archivos (pedido de la pareja): 01 a 09.
+           Celular y tableta: carrusel con scroll-snap (la foto siguiente asoma). Escritorio: 01-05 arriba y 06-09 abajo, la segunda fila desplazada -->
       <div class="looks">
-        <p class="looks__label">Ideas para inspirarte</p>
-        <ul class="looks__grid" aria-label="Ideas de looks">
-          <li class="looks__item">
-            <img src="public/img/looks/lino-beige-400.webp" srcset="public/img/looks/lino-beige-400.webp 400w, public/img/looks/lino-beige-800.webp 800w"
-                 sizes="(min-width: 768px) 15rem, 45vw" width="400" height="533" loading="lazy" decoding="async" alt="Mujer con un vestido de lino beige, sin mangas y a la altura de la rodilla, con sandalias de taco transparentes">
-            <span class="looks__cap" aria-hidden="true">Vestido de lino</span>
-          </li>
-          <li class="looks__item">
-            <img src="public/img/looks/traje-claro-400.webp" srcset="public/img/looks/traje-claro-400.webp 400w, public/img/looks/traje-claro-800.webp 800w"
-                 sizes="(min-width: 768px) 15rem, 45vw" width="400" height="533" loading="lazy" decoding="async" alt="Hombre con un traje beige claro, camisa abierta y zapatos de gamuza marrones, apoyado en una baranda">
-            <span class="looks__cap" aria-hidden="true">Traje claro</span>
-          </li>
-          <li class="looks__item">
-            <img src="public/img/looks/lino-gris-400.webp" srcset="public/img/looks/lino-gris-400.webp 400w, public/img/looks/lino-gris-800.webp 800w"
-                 sizes="(min-width: 768px) 15rem, 45vw" width="400" height="533" loading="lazy" decoding="async" alt="Mujer con un vestido largo gris de lino, de manga larga, con un ramo de flores silvestres en la mano">
-            <span class="looks__cap" aria-hidden="true">Vestido midi</span>
-          </li>
-          <li class="looks__item">
-            <img src="public/img/looks/camisa-lino-400.webp" srcset="public/img/looks/camisa-lino-400.webp 400w, public/img/looks/camisa-lino-800.webp 800w"
-                 sizes="(min-width: 768px) 15rem, 45vw" width="400" height="533" loading="lazy" decoding="async" alt="Hombre con una camisa de lino celeste arremangada y un pantalón claro, en un parque">
-            <span class="looks__cap" aria-hidden="true">Camisa de lino</span>
-          </li>
+        <p class="looks__label" id="looks-label">Ideas para inspirarte</p>
+        <ul class="looks__grid" tabindex="0" aria-labelledby="looks-label">
+          <li class="looks__item"><img src="public/img/looks/look-01-400.webp" srcset="public/img/looks/look-01-400.webp 400w, public/img/looks/look-01-800.webp 800w"
+               sizes="(min-width: 1024px) 15rem, (min-width: 768px) 30vw, 70vw" width="400" height="533" loading="lazy" decoding="async" alt="Pareja de invitados en una terraza frente a un lago: ella con un vestido largo de gasa celeste, él con traje celeste y camisa blanca abierta, sin corbata"></li>
+          <li class="looks__item"><img src="public/img/looks/look-02-400.webp" srcset="public/img/looks/look-02-400.webp 400w, public/img/looks/look-02-800.webp 800w"
+               sizes="(min-width: 1024px) 15rem, (min-width: 768px) 30vw, 70vw" width="400" height="533" loading="lazy" decoding="async" alt="Pareja al atardecer en una terraza junto al mar: ella con un vestido largo estampado con flores en tonos durazno, él con traje arena y camisa blanca abierta"></li>
+          <li class="looks__item"><img src="public/img/looks/look-03-400.webp" srcset="public/img/looks/look-03-400.webp 400w, public/img/looks/look-03-800.webp 800w"
+               sizes="(min-width: 1024px) 15rem, (min-width: 768px) 30vw, 70vw" width="400" height="533" loading="lazy" decoding="async" alt="Pareja en un jardín: ella con blazer verde salvia sobre un vestido midi de satén crema, él con camisa de lino salvia y pantalón crema"></li>
+          <li class="looks__item"><img src="public/img/looks/look-04-400.webp" srcset="public/img/looks/look-04-400.webp 400w, public/img/looks/look-04-800.webp 800w"
+               sizes="(min-width: 1024px) 15rem, (min-width: 768px) 30vw, 70vw" width="400" height="533" loading="lazy" decoding="async" alt="Dos invitados en un jardín con guirnaldas de luces: uno con camisa blanca, tiradores, moño y pantalón gris; el otro con traje rosa viejo y camisa blanca abierta"></li>
+          <li class="looks__item"><img src="public/img/looks/look-05-400.webp" srcset="public/img/looks/look-05-400.webp 400w, public/img/looks/look-05-800.webp 800w"
+               sizes="(min-width: 1024px) 15rem, (min-width: 768px) 30vw, 70vw" width="400" height="533" loading="lazy" decoding="async" alt="Pareja caminando por una terraza con flores: ella con un vestido largo de gasa coral, él con traje de lino crema y camisa blanca"></li>
+          <li class="looks__item"><img src="public/img/looks/look-06-400.webp" srcset="public/img/looks/look-06-400.webp 400w, public/img/looks/look-06-800.webp 800w"
+               sizes="(min-width: 1024px) 15rem, (min-width: 768px) 30vw, 70vw" width="400" height="533" loading="lazy" decoding="async" alt="Pareja en el patio de una casona de piedra: ella con un enterito largo color malva, él con blazer crema, camisa rosa viejo y pantalón crema"></li>
+          <li class="looks__item"><img src="public/img/looks/look-07-400.webp" srcset="public/img/looks/look-07-400.webp 400w, public/img/looks/look-07-800.webp 800w"
+               sizes="(min-width: 1024px) 15rem, (min-width: 768px) 30vw, 70vw" width="400" height="533" loading="lazy" decoding="async" alt="Pareja en un camino entre cipreses: ella con un vestido largo floral en verde salvia, él con traje de lino arena y camisa verde suave"></li>
+          <li class="looks__item"><img src="public/img/looks/look-08-400.webp" srcset="public/img/looks/look-08-400.webp 400w, public/img/looks/look-08-800.webp 800w"
+               sizes="(min-width: 1024px) 15rem, (min-width: 768px) 30vw, 70vw" width="400" height="533" loading="lazy" decoding="async" alt="Pareja bajo una pérgola con flores: ella con un vestido midi floral rosa empolvado de hombros descubiertos, él con blazer rosa viejo, camisa y pantalón crema"></li>
+          <li class="looks__item"><img src="public/img/looks/look-09-400.webp" srcset="public/img/looks/look-09-400.webp 400w, public/img/looks/look-09-800.webp 800w"
+               sizes="(min-width: 1024px) 15rem, (min-width: 768px) 30vw, 70vw" width="400" height="533" loading="lazy" decoding="async" alt="Pareja en un mirador sobre el mar: ella con un vestido largo estampado en amarillo y celeste, él con traje azul marino y camisa blanca abierta"></li>
         </ul>
       </div>
     </section>
@@ -502,6 +499,6 @@
     <span class="sr-only">Música de fondo</span>
   </button>
 
-  <script type="module" src="main.js?v=20261110e"></script>
+  <script type="module" src="main.js?v=20261110f"></script>
 </body>
 </html>
