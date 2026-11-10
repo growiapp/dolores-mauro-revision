@@ -148,6 +148,17 @@ section { padding: clamp(4rem, 11vw, 8rem) var(--gutter); }
 .tl__map { display: inline-flex; align-items: center; min-height: 44px; color: var(--oliva); font: 600 .875rem/1 var(--sans); text-underline-offset: 3px; }
 @media (max-width: 360px) { .timeline { --tl-time: 3.6rem; --tl-icon: 2.6rem; --tl-gap: .65rem; } .tl__time { font-size: 1.45rem; } }
 .day__cal { display: grid; justify-items: center; gap: .6rem; margin-top: 3rem; text-align: center; }
+/* Invitación desde las 16: sin cronograma. Un pliego breve: el horario en grande, unido por un filete, y el lugar debajo */
+.venue { display: grid; justify-items: center; gap: .35rem; width: min(100%, 34rem); margin: 3rem auto 0; padding-block: 2.25rem;
+  border-block: var(--hair); text-align: center; }
+.venue__hours { display: flex; align-items: center; gap: clamp(.9rem, 4vw, 1.5rem); margin: 0 0 1rem; color: var(--oliva);
+  font: 300 clamp(2.5rem, 11vw, 3.75rem)/1 var(--serif); font-variation-settings: var(--display); font-variant-numeric: lining-nums tabular-nums; }
+.venue__rule { width: clamp(1.75rem, 8vw, 3rem); height: 1px; background: var(--arena); }
+.venue__lead { font-size: clamp(1.75rem, 7vw, 2.25rem); font-weight: 400; }
+.venue__text { max-width: 30ch; margin: .2rem 0 1.4rem; font: 400 1.125rem/1.45 var(--serif); font-style: italic; font-variation-settings: var(--text-axes); color: var(--castano); text-wrap: balance; }
+.venue__place { margin: 0; font: 400 clamp(1.375rem, 5vw, 1.625rem)/1.1 var(--serif); font-variation-settings: var(--display); }
+.venue__area { margin: 0; font: 500 .75rem/1.2 var(--sans); letter-spacing: .3em; margin-right: -.3em; text-transform: uppercase; color: var(--castano); }
+.venue__map { margin-top: 1.4rem; }
 
 /* ---------- Botones ---------- */
 /* Rectos y en versalitas espaciadas, como la papelería: sin pastillas de app */
@@ -176,6 +187,16 @@ section { padding: clamp(4rem, 11vw, 8rem) var(--gutter); }
 /* La segunda línea, en voz baja: precisa sin sonar a regla */
 .detail__note { font: 400 1.125rem/1.45 var(--serif); font-style: italic; font-variation-settings: var(--text-axes); color: var(--castano); text-wrap: balance; }
 
+.detail__coat { margin-top: .35rem !important; }
+/* Ideas de looks: cuatro fotos verticales en fila, como un contacto de revista, con un rótulo corto debajo de cada una */
+.looks { max-width: 64rem; margin: clamp(2rem, 5vw, 3rem) auto 0; }
+.looks__label { margin: 0 0 .9rem; font: 400 1.125rem/1.3 var(--serif); font-style: italic; font-variation-settings: var(--text-axes); color: var(--castano); }
+.looks__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(.6rem, 2vw, 1rem); }
+.looks__item { display: grid; gap: .55rem; margin: 0; }
+.looks__item img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 4; object-fit: cover; background: var(--arena); filter: saturate(.8) sepia(.06); } /* una serie: el tono apagado de las fotos de la invitación */
+.looks__cap { font: 500 .75rem/1.2 var(--sans); letter-spacing: .2em; text-transform: uppercase; color: var(--tinta-suave); }
+@media (min-width: 768px) { .looks__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+
 /* ---------- Sección propia de cada modalidad (rótulo, importe o frase, texto y datos bancarios) ---------- */
 .contribution { display: grid; justify-items: center; gap: 1rem; text-align: center; }
 .contribution .head { margin-bottom: .5rem; }
@@ -198,6 +219,19 @@ section { padding: clamp(4rem, 11vw, 8rem) var(--gutter); }
 .steps .bank dt { grid-area: dt; }
 .steps .bank dd { grid-area: dd; margin-top: .45rem; white-space: nowrap; overflow-wrap: normal; }
 .steps .bank__copy { grid-area: copy; grid-row: auto; grid-column: auto; }
+/* Condiciones de pago (config.js, payment): solo con valores confirmados */
+.terms { margin: 1rem 0 0; font-size: .9375rem; color: var(--tinta-suave); text-wrap: pretty; }
+.terms__hint { margin: 1rem 0 0; font-size: .875rem; line-height: 1.45; color: var(--tinta-suave); text-wrap: pretty; }
+.terms__hint + .terms__wa { margin-top: .6rem; }
+/* Vista previa del mensaje (demo y revisión): el mensaje preparado, sin abrir ninguna conversación */
+.msg-preview { width: min(100% - 2rem, 30rem); max-height: calc(100dvh - 2rem); padding: 1.5rem; border: 0; border-radius: 4px; background: var(--marfil); color: var(--tinta);
+  box-shadow: 0 1.5rem 3rem rgb(28 25 22 / .25); overflow: auto; }
+.msg-preview::backdrop { background: rgb(28 25 22 / .55); }
+.msg-preview__title { font-size: 1.5rem; font-weight: 400; }
+.msg-preview__note { margin: .6rem 0 1rem; font-size: .875rem; line-height: 1.45; color: var(--tinta-suave); }
+.msg-preview__text { margin: 0 0 1.25rem; padding: 1rem; background: var(--papel); border: var(--hair); font: 400 .9375rem/1.5 var(--sans); white-space: pre-wrap; overflow-wrap: anywhere; }
+.msg-preview__close { width: 100%; }
+.terms__wa { margin-top: 1rem; width: 100%; text-align: center; line-height: 1.35; padding-block: .9rem; }
 .contribution__closing { max-width: 34ch; margin: 1.25rem 0 0; font: 400 1.125rem/1.5 var(--serif); font-style: italic; color: var(--tinta-suave); text-wrap: balance; }
 .bank-wrap { width: min(100%, 28rem); }
 .bank__status { min-height: 1.4em; margin: .5rem 0 0; font-size: .875rem; color: var(--oliva); text-align: left; }
@@ -243,6 +277,8 @@ section { padding: clamp(4rem, 11vw, 8rem) var(--gutter); }
 .rsvp { background: var(--oliva) var(--grain); color: var(--marfil); display: grid; justify-items: center; text-align: center; gap: clamp(2rem, 6vw, 3rem); }
 .rsvp .eyebrow { color: var(--arena); }
 .rsvp .display { font-size: clamp(2.5rem, 10.5vw, 4.5rem); }
+.rsvp__until { margin: -.35rem 0 0; font: 400 clamp(1.25rem, 4.5vw, 1.5rem)/1.3 var(--serif); font-style: italic; font-variation-settings: var(--text-axes);
+  color: color-mix(in srgb, var(--marfil) 94%, var(--oliva)); text-wrap: balance; }
 .rsvp__sub { color: color-mix(in srgb, var(--marfil) 88%, var(--oliva)); }
 
 .form { width: min(100%, 34rem); text-align: left; }
@@ -614,7 +650,8 @@ body:has(.lightbox[open]) .fab { visibility: hidden; }
   .day__aside { display: block; grid-column: 1; grid-row: 1; position: sticky; top: 3rem; }
   .day__aside .head { justify-items: start; text-align: left; }
   .day__aside .head .eyebrow::before { display: none; }
-  .day > .timeline, .day > .day__nolink { grid-column: 2; grid-row: 1; margin: 0; }
+  .day > .timeline, .day > .day__nolink, .day > .venue { grid-column: 2; grid-row: 1; margin: 0; }
+  .day > .venue { justify-items: start; text-align: left; justify-self: start; padding-block: 2.75rem; }
   .day__cal { justify-items: start; text-align: left; margin-top: 2rem; }
   /* Confirmar: el llamado a la izquierda, el formulario a la derecha */
   .rsvp { grid-template-columns: minmax(0, 1fr) minmax(0, 34rem); column-gap: clamp(3rem, 7vw, 7rem); align-items: start; justify-items: stretch;

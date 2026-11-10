@@ -4,7 +4,8 @@
 export const LIMITS = { group: 80, name: 80, member: 80, dietNotes: 120, msgName: 60, text: 500, bodyBytes: 8192 };
 export const DIETS = { vegetariano: "Vegetariano", vegano: "Vegano", "sin-tacc": "Sin TACC (celíaco)", otra: "Otra" };
 // Modalidades de invitación (ids públicos de los enlaces). Sus nombres legibles viven solo en el servidor.
-export const MODALITIES = ["ceremonia", "celebracion"];
+// V4: "fiesta" (desde las 16) es la tercera invitación; se cuenta aparte de "celebracion".
+export const MODALITIES = ["ceremonia", "celebracion", "fiesta"];
 
 // Caracteres invisibles o peligrosos: controles (Cc) y de formato (Cf: ancho cero, bidi, BOM…).
 const INVISIBLE = /[\p{Cc}\p{Cf}\p{Zl}\p{Zp}]/gu;

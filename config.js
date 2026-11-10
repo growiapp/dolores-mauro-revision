@@ -6,6 +6,8 @@ export const CONFIG = {
   requestTimeoutMs: 30000, // validado en 2B.3 con el lock de 20 s: no reducir
   demoHosts: ["growiapp.github.io"], // vista previa privada (build-preview.mjs)
 
+  rsvpUntil: "2027-01-15",
+
   rsvpMaxPeople: 10,
 
   rotateEvery: 8000,

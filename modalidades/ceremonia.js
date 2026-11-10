@@ -1,6 +1,5 @@
-// Modalidad SIN COSTO (enlace ?invitacion=ceremonia): ceremonia religiosa, recepción y el resto del día; sección de regalos.
-// Solo lo propio de esta modalidad: este archivo llega únicamente a quien abre este enlace.
-import { DESDE_RECEPCION, svg } from "./comun.js";
+import { svg } from "./comun.js";
+import { DESDE_RECEPCION } from "./cronograma.js";
 
 export default {
   id: "ceremonia",
@@ -9,13 +8,11 @@ export default {
   ics: "public/casamiento-ceremonia.ics",
   band: [["11:30", "Ceremonia religiosa · Tumbaya"], ["12:30", "Recepción · Finca Los Churquis, Volcán"]],
   timeline: [
-    // Ubicación verificada por nombre (parroquia Nuestra Señora de los Dolores, Tumbaya): enlace de búsqueda, sin coordenadas
     { time: "11:30", title: "Ceremonia religiosa", place: "Iglesia de Tumbaya",
       svg: svg('<path d="M12 2.5v4M10.3 4.2h3.4M6 21V11.5L12 7l6 4.5V21M4 21h16M10 21v-4.2a2 2 0 0 1 4 0V21"/>'),
       map: "https://www.google.com/maps/search/?api=1&query=Iglesia%20de%20Tumbaya%2C%20Jujuy" },
     ...DESDE_RECEPCION,
   ],
-  // Regalos: opcional y sin tono de pedido (texto de Dolores y Mauro, 09/11/2026). Los datos bancarios salen de comun.js (BANK).
   extra: {
     id: "regalos", title: "Regalos",
     lead: "Lo más lindo es compartir este día con vos.",

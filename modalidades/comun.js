@@ -8,15 +8,7 @@ export const ICONS = {
   luna: svg('<path d="M15.5 3.6a8.6 8.6 0 1 0 4.9 13.2A7 7 0 0 1 15.5 3.6z"/><path d="M18.5 4.2v2.6M17.2 5.5h2.6"/>'),
 };
 
-const FINCA = "Finca Los Churquis, Volcán";
 export const FINCA_MAPA = "https://maps.app.goo.gl/17YRxFkns39AWd3t5";
-export const DESDE_RECEPCION = [
-  { time: "12:30", title: "Recepción", place: FINCA, icon: "copas", map: FINCA_MAPA },
-  { time: "13:00", title: "Ceremonia civil", place: "En la finca", icon: "anillos" },
-  { time: "14:00", title: "Almuerzo", icon: "mesa" },
-  { time: "15:00", title: "A bailar", icon: "musica" },
-  { time: "22:00", title: "Fin del evento", icon: "luna" },
-];
 
 export const BANK = [["Alias", "DOLOYMAURO.BODA"], ["CVU", "0000076500000016248061"]];
 

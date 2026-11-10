@@ -17,6 +17,12 @@ if (typeof document !== "undefined") {
   const $ = (s, root = document) => root.querySelector(s);
   const $$ = (s, root = document) => [...root.querySelectorAll(s)];
   const params = new URLSearchParams(location.search);
+  // "2027-01-15" → "15 de enero de 2027" (hora de Argentina); "" si no es una fecha
+  const longDate = (iso) => (/^\d{4}-\d{2}-\d{2}$/.test(iso || "") ? new Date(`${iso}T12:00:00-03:00`).toLocaleDateString("es-AR", { day: "numeric", month: "long", year: "numeric", timeZone: "America/Argentina/Buenos_Aires" }) : "");
+  // Plazo para confirmar: hasta el día rsvpUntil inclusive, en Argentina (UTC-3). El servidor lo hace cumplir; acá se anuncia
+  const rsvpUntil = longDate(CONFIG.rsvpUntil);
+  const rsvpOver = !!rsvpUntil && new Date(Date.now() - 3 * 3600e3).toISOString().slice(0, 10) > CONFIG.rsvpUntil;
+  const rsvpOverText = `El plazo para confirmar terminó el ${rsvpUntil}.`;
   const review = params.has("revision");
   const reduced = matchMedia("(prefers-reduced-motion: reduce)");
   document.documentElement.classList.add("js");
@@ -87,7 +93,7 @@ if (typeof document !== "undefined") {
   if (canAdd || canListen || canSuggest) {
     if (canAdd) {
       const add = Object.assign($(".playlist__add"), { href: music.collaborateUrl, hidden: false });
-      $(".playlist__text").textContent = "Hay canciones que no pueden faltar en una fiesta. ¡Sumá la tuya y armemos juntos la playlist!";
+      $(".playlist__text").textContent = "Ayudanos a llenar la pista: sumá esa canción que no puede faltar y armemos la playlist entre todos.";
       // Si vence con la página abierta: no se abre un enlace vencido, el botón desaparece
       add.addEventListener("click", (e) => { if (Date.parse(music.collaborateUntil) <= Date.now()) { e.preventDefault(); add.hidden = true; } });
     }
@@ -180,6 +186,7 @@ if (typeof document !== "undefined") {
       if (err.code === "invalid") return "No pudimos registrar los datos. Revisá los campos marcados.";
       if (err.code === "payload_too_large") return "Hay demasiado texto. Acortalo y probá de nuevo.";
       if (err.code === "closed") return "Este formulario ya no recibe respuestas.";
+      if (err.code === "rsvp_deadline") return rsvpUntil ? rsvpOverText : "El plazo para confirmar ya terminó.";
       return "No pudimos registrar tu respuesta. Probá de nuevo en unos minutos.";
     }
     if (err?.kind === "timeout" || err?.kind === "invalid_response") {
@@ -188,9 +195,10 @@ if (typeof document !== "undefined") {
     return "No pudimos enviarlo. Tus datos siguen acá: revisá tu conexión y probá de nuevo.";
   };
   // Formularios: quedan deshabilitados sin JS, sin backend válido o (RSVP) sin modalidad; acá se habilitan.
-  const wire = (form, collect, validate, submit, done) => {
+  const wire = (form, collect, validate, submit, done, closedText = "") => {
     const body = $(".form__body", form), status = $(".form__status", form), btn = $("button[type=submit]", form);
     if (!api) { status.textContent = "Este formulario todavía no está disponible."; return; }
+    if (closedText) { status.textContent = closedText; return; }
     const keeper = createRequestKeeper();
     form.addEventListener("reset", () => keeper.settle());
     body.disabled = false;
@@ -251,6 +259,8 @@ if (typeof document !== "undefined") {
 
   // ---------- RSVP por familia o grupo: una fila por cada integrante que asiste; la cantidad se calcula ----------
   const rsvp = $("#rsvp-form");
+  if (rsvpUntil) Object.assign($("[data-slot=rsvp-until]"), { textContent: rsvpOver ? rsvpOverText : `hasta el ${rsvpUntil}`, hidden: false });
+  if (rsvpOver) fab.hidden = true; // vencido el plazo, el botón fijo no invita a confirmar
   const transportBox = $("[data-field=transport]", rsvp);
   const membersBox = $(".members", rsvp), list = $(".members__list", rsvp), addBtn = $(".members__add", rsvp), countEl = $(".members__count", rsvp);
   const rowTpl = $("#member-row");
@@ -344,7 +354,7 @@ if (typeof document !== "undefined") {
         finish(form, api.demo
           ? "Así se ve la confirmación. Como es una demostración, esta respuesta no se guardó ni se envió."
           : `${thanks} ${mod.afterRsvp ? mod.afterRsvp + " " : ""}Si necesitan corregir algo, envíen una nueva respuesta: Dolores y Mauro la revisan.`, resetMembers);
-      });
+      }, rsvpOver ? rsvpOverText : "");
     })
     .catch((err) => { console.error("[invitación] No se pudo cargar la modalidad", err); noModality(); });
 
@@ -357,15 +367,23 @@ if (typeof document !== "undefined") {
   function renderDay(m, icons) {
     const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
     $("[data-slot=band]").innerHTML = m.band.map(([t, s]) => `<li><time datetime="2027-04-03T${t}-03:00">${t}</time> <span>${esc(s)}</span></li>`).join("");
-    $("[data-slot=timeline]").innerHTML = m.timeline.map((e) => `<li class="tl__item" data-reveal>
+    const mapLink = (href, cls) => `<a class="${cls}" href="${esc(href)}" target="_blank" rel="noopener">Cómo llegar<span class="sr-only"> (se abre en otra pestaña)</span></a>`;
+    // Sin cronograma (brindis): un solo bloque con la invitación, horario, lugar y mapa; la lista vacía no queda en la página
+    if (m.venue) {
+      const v = m.venue, at = (t) => `<time datetime="2027-04-03T${t}-03:00">${t}</time>`, venue = $("[data-slot=venue]");
+      $("[data-slot=timeline]").remove();
+      venue.innerHTML = `${v.lead ? `<h3 class="venue__lead">${esc(v.lead)}</h3>` : ""}${v.text ? `<p class="venue__text">${esc(v.text)}</p>` : ""}<p class="venue__hours"><span class="sr-only">De </span>${at(v.from)}<span class="venue__rule" aria-hidden="true"></span><span class="sr-only"> a </span>${at(v.to)}</p>
+        <p class="venue__place">${esc(v.place)}</p><p class="venue__area">${esc(v.area)}</p>${v.map ? mapLink(v.map, "btn btn--line venue__map") : ""}`;
+      venue.hidden = false;
+    } else $("[data-slot=timeline]").innerHTML = m.timeline.map((e) => `<li class="tl__item" data-reveal>
       <time class="tl__time" datetime="2027-04-03T${e.time}-03:00">${e.time}</time>
       <span class="tl__icon">${e.svg || icons[e.icon] || ""}</span>
-      <div class="tl__body"><h3>${esc(e.title)}</h3>${e.place ? `<p class="tl__place">${esc(e.place)}</p>` : ""}${e.map
-        ? `<a class="tl__map" href="${esc(e.map)}" target="_blank" rel="noopener">Cómo llegar<span class="sr-only"> (se abre en otra pestaña)</span></a>` : ""}</div>
+      <div class="tl__body"><h3>${esc(e.title)}</h3>${e.place ? `<p class="tl__place">${esc(e.place)}</p>` : ""}${e.map ? mapLink(e.map, "tl__map") : ""}</div>
     </li>`).join("");
-    observe($("[data-slot=timeline]"));
+    observe($("#el-dia"));
     const cal = $("[data-slot=cal]");
     $("a", cal).href = m.ics;
+    if (m.venue) $(".note", cal).textContent = "Agendá el brindis con su horario y el lugar.";
     cal.hidden = false;
   }
 
@@ -417,6 +435,42 @@ if (typeof document !== "undefined") {
     return wrap;
   }
 
+  // Condiciones de pago de esa invitación (payment.lines: los textos vienen del módulo de la invitación). El botón lleva a
+  // UN solo número (sin número, no hay botón); el mensaje precargado no tiene datos personales. Nada dice ni insinúa que el
+  // sitio verifique pagos ni que el envío acredite nada.
+  // Solo con el backend de producción (config.js mode "http") el botón abre la conversación real. En demo o revisión muestra
+  // el mensaje preparado en un diálogo y no escribe a nadie. Lo decide la configuración publicada, no un parámetro de la URL.
+  function paymentTerms(p, el) {
+    if (!p) return [];
+    const out = [], lines = p.lines || [];
+    if (lines.length) out.push(el("p", "terms", lines.join(" ")));
+    if (p.receiptCta && /^\d{10,15}$/.test(p.whatsapp || "")) {
+      if (p.receiptHint) out.push(el("p", "terms__hint", p.receiptHint));
+      if (backend.kind === "http") {
+        const a = el("a", "btn btn--line terms__wa", p.receiptCta);
+        Object.assign(a, { href: `https://wa.me/${p.whatsapp}?text=${encodeURIComponent(p.receiptText || "")}`, target: "_blank", rel: "noopener" });
+        a.append(el("span", "sr-only", " (se abre en otra pestaña)"));
+        out.push(a);
+      } else out.push(...messagePreview(p, el));
+    }
+    return out;
+  }
+
+  function messagePreview(p, el) {
+    const btn = Object.assign(el("button", "btn btn--line terms__wa", p.receiptCta), { type: "button" });
+    btn.setAttribute("aria-haspopup", "dialog");
+    const dlg = el("dialog", "msg-preview");
+    dlg.setAttribute("aria-labelledby", "msg-preview-title");
+    const title = Object.assign(el("h3", "msg-preview__title", p.preview?.title || ""), { id: "msg-preview-title" });
+    const close = Object.assign(el("button", "btn btn--solid msg-preview__close", "Cerrar"), { type: "button" });
+    dlg.append(title, el("p", "msg-preview__note", p.preview?.note || ""), el("pre", "msg-preview__text", p.receiptText || ""), close);
+    btn.addEventListener("click", () => dlg.showModal());
+    close.addEventListener("click", () => dlg.close());
+    dlg.addEventListener("click", (e) => { if (e.target === dlg) dlg.close(); }); // tocar el fondo cierra
+    dlg.addEventListener("close", () => btn.focus());
+    return [btn, dlg];
+  }
+
   function renderExtra(x, bank) {
     const box = $("[data-slot=extra]");
     if (!x) return;
@@ -451,6 +505,7 @@ if (typeof document !== "undefined") {
         if (!s.bank || bank) body.append(el("p", "steps__text", s.text));
         if (s.link) body.append(Object.assign(el("a", "steps__link", s.link.label), { href: s.link.href }));
         if (s.bank) body.append(bank ? bankList(bank) : pending());
+        if (s.bank && bank) body.append(...paymentTerms(x.payment, el)); // sin cuenta verificada, tampoco condiciones de pago
         li.append(body);
         ol.append(li);
       });

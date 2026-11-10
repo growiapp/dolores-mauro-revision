@@ -1,0 +1,15 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//FA Studio//Dolores y Mauro//ES
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:20270403-fiesta@dolores-y-mauro
+DTSTAMP:20261110T120000Z
+DTSTART:20270403T190000Z
+DTEND:20270404T010000Z
+SUMMARY:Casamiento de Dolores y Mauro · Brindis
+LOCATION:Finca Los Churquis\, Volcán\, Jujuy
+DESCRIPTION:De 16:00 a 22:00 (hora de Argentina). Cómo llegar: https://maps.app.goo.gl/17YRxFkns39AWd3t5
+END:VEVENT
+END:VCALENDAR

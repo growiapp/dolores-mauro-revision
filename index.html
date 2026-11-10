@@ -26,7 +26,7 @@
   <!-- Modo revisión (?revision): vista para la pareja, con una aclaración general y datos de ejemplo. La vista pública no los muestra.
        Los datos pendientes están en deliverables/evolucion-v2/pendientes.md -->
   <script>if (new URLSearchParams(location.search).has("revision")) document.documentElement.classList.add("review");</script>
-  <link rel="stylesheet" href="styles.css?v=20261109c">
+  <link rel="stylesheet" href="styles.css?v=20261110e">
   <link rel="stylesheet" href="aperturas.css?v=20261109a"> <!-- revisión de aperturas (?apertura=a1|a2) -->
 </head>
 <body>
@@ -52,8 +52,14 @@
   <script>{ const d = document.currentScript.previousElementSibling, root = document.documentElement;
     // Secciones comunes a los dos enlaces: un enlace directo a una de ellas entra sin apertura y respeta el destino
     const direct = ["el-dia", "detalles", "nosotros", "confirmar", "mensajes", "playlist"].includes(decodeURIComponent(location.hash.slice(1)));
-    const ap = new URLSearchParams(location.search).get("apertura"), skip = !d.showModal || direct || ap === "no";
-    // Revisión de aperturas: ?apertura=a1|a2 reemplaza esta por una de las propuestas (aperturas.js); la modalidad no cambia
+    // V4: A2 («Álbum de autor») es LA apertura, elegida por Dolores y Mauro para las tres invitaciones. Cualquier enlace la
+    // muestra, también los ya compartidos con ?apertura=a1 (sin redirigir: la URL y la modalidad quedan como están).
+    // A1 y la apertura anterior se conservan como referencia, solo en la revisión: &revision&apertura=a1 | clasica.
+    // ?apertura=no entra directo (pruebas)
+    const q = new URLSearchParams(location.search), asked = q.get("apertura");
+    const ap = asked === "no" ? "no" : q.has("revision") && (asked === "a1" || asked === "clasica") ? asked : "a2";
+    const skip = !d.showModal || direct || ap === "no";
+    // ?apertura=a1|a2 reemplaza esta por la apertura de aperturas.js; la modalidad no cambia
     if (!skip && (ap === "a1" || ap === "a2")) { d.remove(); root.dataset.apertura = ap; } else if (skip) d.remove(); else {
       // La apertura se abre hacia la portada: la página tiene que estar arriba (al recargar, el navegador restauraba el scroll)
       if ("scrollRestoration" in history) history.scrollRestoration = "manual";
@@ -198,6 +204,8 @@
         </div>
       </div>
       <ol class="timeline" data-slot="timeline"></ol>
+      <!-- Invitación sin cronograma (desde las 16): horario y lugar en un solo bloque, con el mapa. Lo pinta main.js -->
+      <div class="venue" data-slot="venue" hidden></div>
       <p class="day__nolink note" data-slot="nomod" hidden>Para ver los horarios, abrí la invitación desde el enlace que te enviaron.</p>
     </section>
 
@@ -208,7 +216,37 @@
         <div class="detail__copy fx">
           <p class="detail__text">Queremos verlos arreglados, pero cómodos para disfrutar y bailar.</p>
           <p class="detail__note">Un look cuidado, sin necesidad de etiqueta.</p>
+          <p class="detail__text detail__coat">A la noche refresca, así que traé un abrigo.</p>
         </div>
+      </div>
+      <!-- Ideas de looks (pedido de Dolores): cuatro fotos de Unsplash, «Uso gratuito bajo la Licencia Unsplash» (se pueden
+           publicar; no exigen atribución). Las referencias de Pinterest de Dolores no se publican. Fotos: Reistor (dziVRZYOFpI),
+           Samuel Cruz (t7xDQNwwEXk), Icons8 Team (6LZuSzSwso0) y Ramy Mamdouh (I_DMyDtcz2k), recortadas a 3:4.
+           Ver deliverables/evolucion-v2/v4.md -->
+      <div class="looks">
+        <p class="looks__label">Ideas para inspirarte</p>
+        <ul class="looks__grid" aria-label="Ideas de looks">
+          <li class="looks__item">
+            <img src="public/img/looks/lino-beige-400.webp" srcset="public/img/looks/lino-beige-400.webp 400w, public/img/looks/lino-beige-800.webp 800w"
+                 sizes="(min-width: 768px) 15rem, 45vw" width="400" height="533" loading="lazy" decoding="async" alt="Mujer con un vestido de lino beige, sin mangas y a la altura de la rodilla, con sandalias de taco transparentes">
+            <span class="looks__cap" aria-hidden="true">Vestido de lino</span>
+          </li>
+          <li class="looks__item">
+            <img src="public/img/looks/traje-claro-400.webp" srcset="public/img/looks/traje-claro-400.webp 400w, public/img/looks/traje-claro-800.webp 800w"
+                 sizes="(min-width: 768px) 15rem, 45vw" width="400" height="533" loading="lazy" decoding="async" alt="Hombre con un traje beige claro, camisa abierta y zapatos de gamuza marrones, apoyado en una baranda">
+            <span class="looks__cap" aria-hidden="true">Traje claro</span>
+          </li>
+          <li class="looks__item">
+            <img src="public/img/looks/lino-gris-400.webp" srcset="public/img/looks/lino-gris-400.webp 400w, public/img/looks/lino-gris-800.webp 800w"
+                 sizes="(min-width: 768px) 15rem, 45vw" width="400" height="533" loading="lazy" decoding="async" alt="Mujer con un vestido largo gris de lino, de manga larga, con un ramo de flores silvestres en la mano">
+            <span class="looks__cap" aria-hidden="true">Vestido midi</span>
+          </li>
+          <li class="looks__item">
+            <img src="public/img/looks/camisa-lino-400.webp" srcset="public/img/looks/camisa-lino-400.webp 400w, public/img/looks/camisa-lino-800.webp 800w"
+                 sizes="(min-width: 768px) 15rem, 45vw" width="400" height="533" loading="lazy" decoding="async" alt="Hombre con una camisa de lino celeste arremangada y un pantalón claro, en un parque">
+            <span class="looks__cap" aria-hidden="true">Camisa de lino</span>
+          </li>
+        </ul>
       </div>
     </section>
 
@@ -279,6 +317,8 @@
       <header class="head" data-reveal>
         <p class="eyebrow">R.S.V.P.</p>
         <h2 id="rsvp-title" class="display">Confirmá tu asistencia</h2>
+        <!-- Continúa el título: «Confirmá tu asistencia / hasta el 15 de enero de 2027». Lo escribe main.js con config.rsvpUntil -->
+        <p class="rsvp__until fx" data-slot="rsvp-until" hidden></p>
         <p class="rsvp__sub fx">Una sola respuesta por familia o grupo.</p>
       </header>
 
@@ -374,7 +414,7 @@
       <div class="head" data-reveal>
         <span class="playlist__icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M9 18.5V5.2l10-2v12.6"/><circle cx="6.8" cy="18.5" r="2.3"/><circle cx="16.8" cy="15.8" r="2.3"/><path d="M9 9.2l10-2"/></svg></span>
         <p class="eyebrow">Playlist</p>
-        <h2 id="playlist-title" class="display">La banda sonora de nuestro día</h2>
+        <h2 id="playlist-title" class="display">¡Prohibido quedarse sentado!</h2>
         <p class="playlist__text fx">Juntamos las canciones que nos acompañan. Dale play y andá entrando en clima.</p>
       </div>
       <!-- Reproductor oficial de Spotify (portada y canciones). Se carga solo al acercarse; si no carga, queda el botón -->
@@ -462,6 +502,6 @@
     <span class="sr-only">Música de fondo</span>
   </button>
 
-  <script type="module" src="main.js?v=20261109c"></script>
+  <script type="module" src="main.js?v=20261110e"></script>
 </body>
 </html>

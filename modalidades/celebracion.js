@@ -1,6 +1,5 @@
-// Modalidad CON COSTO (enlace ?invitacion=celebracion): desde la recepción; tarjeta con importe y datos para transferir.
-// Solo lo propio de esta modalidad: este archivo llega únicamente a quien abre este enlace.
-import { DESDE_RECEPCION } from "./comun.js";
+import { DESDE_RECEPCION } from "./cronograma.js";
+import { tarjeta, PAGO, DESPUES_DE_CONFIRMAR } from "./tarjeta.js";
 
 export default {
   id: "celebracion",
@@ -9,17 +8,6 @@ export default {
   ics: "public/casamiento-celebracion.ics",
   band: [["12:30", "Recepción · Finca Los Churquis, Volcán"], ["13:00", "Ceremonia civil · En la finca"]],
   timeline: DESDE_RECEPCION,
-  // Tarjeta. Valor por persona, fijo: no depende de cuántas personas se confirmen en el formulario.
-  extra: {
-    id: "tarjeta", title: "Tarjeta",
-    price: "$180.000", priceNote: "por persona",
-    // Una línea de introducción y dos pasos, en orden. El segundo lleva los datos bancarios (main.js); sin datos verificados,
-    // no se muestra ninguna cuenta. El sitio no verifica pagos: nada lo insinúa
-    paragraphs: ["Confirmá quiénes vienen y acá abajo tenés los datos para la tarjeta."],
-    steps: [
-      { title: "Confirmación", text: "Una respuesta por familia o grupo, en el formulario de más abajo.", link: { href: "#confirmar", label: "Ir al formulario" } },
-      { title: "Transferencia", text: "$180.000 por persona, a esta cuenta:", bank: true },
-    ],
-  },
-  afterRsvp: "La tarjeta se transfiere aparte; los datos están más arriba.",
+  extra: tarjeta("$180.000", PAGO.celebracion),
+  afterRsvp: DESPUES_DE_CONFIRMAR,
 };
