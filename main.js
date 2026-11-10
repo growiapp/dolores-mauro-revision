@@ -96,11 +96,8 @@ if (typeof document !== "undefined") {
       const b = Object.assign($(".playlist__add"), { href: music.suggestUrl, hidden: false });
       b.firstChild.textContent = "Sugerir canciones";
       $(".playlist__text").textContent = "Contanos qué canciones te gustaría escuchar ese día: las vamos a tener en cuenta para la playlist.";
-    } else if (!canAdd) {
-      // Solo escucha: el título y el texto del HTML ya son los de esta versión (nunca se ofrece «sumar» sin poder hacerlo)
-    } else Object.assign($(".playlist__note"), { hidden: false, textContent: music.platform
-      ? `Quienes se suman como colaboradores pueden agregar, quitar y reordenar canciones en ${music.platform}. Necesitás una cuenta de ${music.platform}.`
-      : "Quienes se suman como colaboradores pueden agregar, quitar y reordenar canciones." });
+    }
+    // Sin aclaraciones técnicas: los botones dicen qué hacen; la cuenta y los permisos los resuelve la plataforma
     $("#playlist").removeAttribute("data-pending");
     // Reproductor oficial (portada y canciones) para una playlist de Spotify. Se crea al acercarse a la sección
     const id = canListen && /^https:\/\/open\.spotify\.com\/playlist\/([A-Za-z0-9]{22})(?:[?#].*)?$/.exec(music.listenUrl)?.[1];
@@ -138,11 +135,19 @@ if (typeof document !== "undefined") {
     const play = () => {
       if (broken || !audio.paused) return; // sin reinicios ni dos reproducciones a la vez
       if (!audio.src) audio.src = music.src;
-      audio.play().then(paint, (e) => (e && e.name === "NotAllowedError" ? paint() : fail()));
+      // NotAllowedError: el navegador pide otro toque. AbortError: se pausó antes de arrancar (p. ej. cambió de pestaña). No son fallas
+      audio.play().then(paint, (e) => (e && (e.name === "NotAllowedError" || e.name === "AbortError") ? paint() : fail()));
     };
     paint();
     toggle.hidden = false;
     toggle.addEventListener("click", () => (audio.paused ? play() : audio.pause()));
+    // Si la invitación deja de verse (otra pestaña, ventana minimizada, celular en segundo plano o salida de la página), la
+    // música se pausa y queda en pausa al volver: la retoma el invitado con el botón, desde donde estaba. Un simple cambio de
+    // foco no la pausa (la ventana puede seguir a la vista), salvo que sea para tocar el reproductor de Spotify: dos audios no.
+    const hush = () => { if (!audio.paused) audio.pause(); };
+    document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") hush(); });
+    addEventListener("pagehide", hush);
+    addEventListener("blur", () => setTimeout(() => { if (document.activeElement?.closest("[data-slot=player]")) hush(); }));
     window.__musica = { abrir: () => { if (!navigator.connection?.saveData) play(); }, audio };
   }
 
@@ -178,14 +183,14 @@ if (typeof document !== "undefined") {
       return "No pudimos registrar tu respuesta. Probá de nuevo en unos minutos.";
     }
     if (err?.kind === "timeout" || err?.kind === "invalid_response") {
-      return "No pudimos confirmar si llegó. Podés volver a enviarla: si ya se había registrado, no se duplica.";
+      return "No pudimos confirmar si llegó. Podés enviarla de nuevo: si ya estaba registrada, no se duplica.";
     }
     return "No pudimos enviarlo. Tus datos siguen acá: revisá tu conexión y probá de nuevo.";
   };
   // Formularios: quedan deshabilitados sin JS, sin backend válido o (RSVP) sin modalidad; acá se habilitan.
   const wire = (form, collect, validate, submit, done) => {
     const body = $(".form__body", form), status = $(".form__status", form), btn = $("button[type=submit]", form);
-    if (!api) { status.textContent = "Esta función todavía no está habilitada."; return; }
+    if (!api) { status.textContent = "Este formulario todavía no está disponible."; return; }
     const keeper = createRequestKeeper();
     form.addEventListener("reset", () => keeper.settle());
     body.disabled = false;
@@ -356,7 +361,7 @@ if (typeof document !== "undefined") {
       <time class="tl__time" datetime="2027-04-03T${e.time}-03:00">${e.time}</time>
       <span class="tl__icon">${e.svg || icons[e.icon] || ""}</span>
       <div class="tl__body"><h3>${esc(e.title)}</h3>${e.place ? `<p class="tl__place">${esc(e.place)}</p>` : ""}${e.map
-        ? `<a class="tl__map" href="${esc(e.map)}" target="_blank" rel="noopener">Ver en el mapa<span class="sr-only"> (se abre en otra pestaña)</span></a>` : ""}</div>
+        ? `<a class="tl__map" href="${esc(e.map)}" target="_blank" rel="noopener">Cómo llegar<span class="sr-only"> (se abre en otra pestaña)</span></a>` : ""}</div>
     </li>`).join("");
     observe($("[data-slot=timeline]"));
     const cal = $("[data-slot=cal]");
@@ -431,7 +436,8 @@ if (typeof document !== "undefined") {
     }
     if (x.lead) head.append(el("p", "display contribution__lead", x.lead));
     const parts = [head];
-    for (const t of x.paragraphs || []) parts.push(el("p", "contribution__text", t));
+    // Con pasos, la introducción menciona los datos: sin datos verificados no se muestra (nunca remite a una cuenta ausente)
+    for (const t of x.steps && !bank ? [] : x.paragraphs || []) parts.push(el("p", "contribution__text", t));
     const pending = () => el("p", "tbd", "Pendiente: datos bancarios de la fuente verificada (bloquea la publicación).");
     if (x.steps) {
       // Pasos numerados; el que lleva la cuenta solo la muestra con datos verificados (nunca remite a una cuenta ausente)

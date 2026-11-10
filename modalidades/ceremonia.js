@@ -15,11 +15,11 @@ export default {
       map: "https://www.google.com/maps/search/?api=1&query=Iglesia%20de%20Tumbaya%2C%20Jujuy" },
     ...DESDE_RECEPCION,
   ],
-  // Regalos (texto propuesto, a aprobar por Dolores y Mauro). Los datos bancarios salen de comun.js (BANK).
+  // Regalos: opcional y sin tono de pedido (texto de Dolores y Mauro, 09/11/2026). Los datos bancarios salen de comun.js (BANK).
   extra: {
     id: "regalos", title: "Regalos",
-    lead: "Lo más lindo es que estés con nosotros.",
-    paragraphs: ["Y si además querés hacernos un regalo, te dejamos los datos para transferir."],
+    lead: "Lo más lindo es compartir este día con vos.",
+    paragraphs: ["Si además querés hacernos un regalo, te dejamos una opción por acá."],
   },
   afterRsvp: "",
 };

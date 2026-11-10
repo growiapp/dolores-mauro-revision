@@ -128,7 +128,10 @@ section { padding: clamp(4rem, 11vw, 8rem) var(--gutter); }
 .portrait__words, .portrait .display { text-align: center; }
 
 /* ---------- El día: cronograma vertical ilustrado (hora · ícono · qué y dónde), unido por un hilo ---------- */
-.day { border-top: var(--hair); }
+.day { display: grid; border-top: var(--hair); }
+.day__aside { display: contents; }
+.day__cal { order: 1; }
+.day > .timeline { width: 100%; }
 .day__nolink { margin: 2rem auto 0; text-align: center; }
 .timeline { --tl-time: 4.4rem; --tl-icon: 3rem; --tl-gap: .9rem; list-style: none; padding: 0; margin: 3rem auto 0; max-width: 34rem; }
 .tl__item { position: relative; display: grid; grid-template-columns: var(--tl-time) var(--tl-icon) 1fr; column-gap: var(--tl-gap); align-items: start; padding-bottom: 2rem; }
@@ -323,7 +326,6 @@ input[type=radio], input[type=checkbox] { width: 1.25rem; height: 1.25rem; margi
 .playlist__player { width: min(100%, 34rem); margin: clamp(2rem, 5vw, 3rem) auto 0; border-radius: 14px; overflow: hidden; background: var(--arena); }
 .playlist__player iframe { display: block; width: 100%; height: 152px; border: 0; }
 .playlist__foot { display: grid; justify-items: center; gap: .5rem; margin-top: clamp(1.75rem, 4vw, 2.5rem); text-align: center; }
-.playlist__note { max-width: 44ch; margin: .5rem 0 0; font-size: .875rem; color: var(--tinta-suave); text-wrap: balance; }
 .music-toggle { position: fixed; z-index: 11; top: calc(env(safe-area-inset-top) + .75rem); right: .75rem; display: grid; place-items: center;
   width: 44px; height: 44px; border: 1px solid rgb(70 61 53 / .25); border-radius: 50%; background: rgb(245 240 232 / .9); color: var(--tinta); cursor: pointer; }
 .music-toggle svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
@@ -391,9 +393,8 @@ body:has(.lightbox[open]) .fab { visibility: hidden; }
   .lightbox__next { right: 1.5rem; }
   .lightbox figure { padding-inline: 6rem; }
 
-  /* Cierre al ancho de la galería. La 168 es vertical (2:3): apoyada abajo conserva a la pareja, el caballo y el
+  /* Cierre a sangre, como la portada. La 168 es vertical (2:3): apoyada abajo conserva a la pareja, el caballo y el
      sombrero en el aire, y deja cielo para la firma. 4:5 en tablet; en escritorio, ver más abajo. */
-  .closing { width: min(calc(84rem - 2 * var(--gutter)), calc(100% - 2 * var(--gutter))); margin-inline: auto; }
   .closing img { height: auto; aspect-ratio: 4 / 5; object-position: 50% 100%; }
 }
 
@@ -417,11 +418,11 @@ body:has(.lightbox[open]) .fab { visibility: hidden; }
   .datelock--sky time { font-size: 2.5rem; }
 }
 
-/* Cierre en escritorio: la 168 es vertical. Al ancho de la galería pero nunca más alta que la pantalla (6:5),
-   con la pareja, el caballo, el sombrero y los pies enteros; la firma pasa debajo, sobre marfil. */
+/* Cierre en escritorio: a sangre (todo el ancho). La 168 es vertical: el encuadre no puede ser más apaisado que 5:4 sin
+   cortar el sombrero en el aire (arriba) o los pies y el caballo (abajo), así que mide un poco más que la pantalla y se
+   recorre con el scroll. Va del sombrero (45 % del alto del original) a los pies (98 %); la firma pasa debajo, sobre marfil. */
 @media (min-width: 1024px) {
-  .closing { width: min(calc(84rem - 2 * var(--gutter)), calc(100% - 2 * var(--gutter)), calc((100svh - 4rem) * 1.2)); }
-  .closing img { aspect-ratio: 6 / 5; object-position: 50% 99%; }
+  .closing img { aspect-ratio: 5 / 4; object-position: 50% 96%; }
   .closing::after { display: none; }
   .closing__sig { position: static; padding-top: 2.5rem; color: var(--tinta); text-shadow: none; }
   .closing__sig .rule-v { color: var(--castano); }
@@ -610,10 +611,11 @@ body:has(.lightbox[open]) .fab { visibility: hidden; }
      recorre el cronograma); a la derecha, el cronograma */
   .day { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 40rem); column-gap: clamp(3rem, 7vw, 7rem); align-items: start;
     padding-inline: var(--wide); }
-  .day > .head { grid-column: 1; grid-row: 1; position: sticky; top: 3rem; justify-items: start; text-align: left; }
-  .day > .head .eyebrow::before { display: none; }
-  .day > .timeline, .day > .day__nolink { grid-column: 2; grid-row: 1 / span 2; margin: 0; }
-  .day > .day__cal { grid-column: 1; grid-row: 2; justify-items: start; text-align: left; margin-top: 2rem; position: sticky; top: 16rem; }
+  .day__aside { display: block; grid-column: 1; grid-row: 1; position: sticky; top: 3rem; }
+  .day__aside .head { justify-items: start; text-align: left; }
+  .day__aside .head .eyebrow::before { display: none; }
+  .day > .timeline, .day > .day__nolink { grid-column: 2; grid-row: 1; margin: 0; }
+  .day__cal { justify-items: start; text-align: left; margin-top: 2rem; }
   /* Confirmar: el llamado a la izquierda, el formulario a la derecha */
   .rsvp { grid-template-columns: minmax(0, 1fr) minmax(0, 34rem); column-gap: clamp(3rem, 7vw, 7rem); align-items: start; justify-items: stretch;
     padding-inline: var(--wide); }

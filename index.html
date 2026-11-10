@@ -26,7 +26,7 @@
   <!-- Modo revisión (?revision): vista para la pareja, con una aclaración general y datos de ejemplo. La vista pública no los muestra.
        Los datos pendientes están en deliverables/evolucion-v2/pendientes.md -->
   <script>if (new URLSearchParams(location.search).has("revision")) document.documentElement.classList.add("review");</script>
-  <link rel="stylesheet" href="styles.css?v=20261108b">
+  <link rel="stylesheet" href="styles.css?v=20261109c">
   <link rel="stylesheet" href="aperturas.css?v=20261109a"> <!-- revisión de aperturas (?apertura=a1|a2) -->
 </head>
 <body>
@@ -183,17 +183,22 @@
     </section>
 
     <!-- Cronograma: lo pinta main.js con el módulo de la modalidad del enlace (modalidades/*.js) -->
+    <!-- Título y calendario van juntos en una sola columna fija (escritorio): con dos fijos independientes, al final de la
+         sección el calendario subía por encima del título. En celular la columna no existe (display: contents) y el
+         calendario va después del cronograma -->
     <section id="el-dia" class="day" aria-labelledby="day-title">
-      <header class="head" data-reveal>
-        <p class="eyebrow">Sábado 3 de abril de 2027</p>
-        <h2 id="day-title" class="display">El día</h2>
-      </header>
+      <div class="day__aside">
+        <header class="head" data-reveal>
+          <p class="eyebrow">Sábado 3 de abril de 2027</p>
+          <h2 id="day-title" class="display">El día</h2>
+        </header>
+        <div class="day__cal" data-slot="cal" hidden>
+          <a class="btn btn--line" href="#" download>Agregar al calendario</a>
+          <p class="note">Agendá el día con sus horarios y lugares.</p>
+        </div>
+      </div>
       <ol class="timeline" data-slot="timeline"></ol>
       <p class="day__nolink note" data-slot="nomod" hidden>Para ver los horarios, abrí la invitación desde el enlace que te enviaron.</p>
-      <div class="day__cal" data-slot="cal" hidden>
-        <a class="btn btn--line" href="#" download>Agregar al calendario</a>
-        <p class="note">Agendá el día con sus horarios y lugares.</p>
-      </div>
     </section>
 
     <section id="detalles" class="details" aria-labelledby="details-title">
@@ -379,7 +384,6 @@
           <a class="btn btn--solid playlist__add" href="#" target="_blank" rel="noopener" hidden>Sumar canciones<span class="sr-only"> (se abre en otra pestaña)</span></a>
           <a class="btn btn--line playlist__listen" href="#" target="_blank" rel="noopener" hidden>Escuchar nuestra playlist<span class="sr-only"> (se abre en otra pestaña)</span></a>
         </div>
-        <p class="playlist__note" hidden></p>
         <p class="tbd">Pendiente: enlace para sumar canciones en Spotify (vale 7 días).</p>
       </div>
     </section>
@@ -393,7 +397,7 @@
 
       <div class="wall" data-state="loading" role="region" aria-label="Mensajes de invitados aprobados">
         <figure class="wall__quote"><blockquote></blockquote><figcaption></figcaption></figure>
-        <p class="wall__empty">Todavía no hay mensajes publicados. Se muestran después de que Dolores y Mauro los aprueben.</p>
+        <p class="wall__empty">Todavía no hay mensajes. Aparecen acá cuando Dolores y Mauro los aprueban.</p>
         <p class="wall__error">No pudimos cargar los mensajes en este momento.</p>
         <div class="wall__nav">
           <button class="lightbox__btn wall__prev" type="button" aria-label="Mensaje anterior">‹</button>
@@ -418,7 +422,7 @@
             <p class="field__count" id="m-text-count"></p>
             <p class="field__err" id="m-text-err"></p>
           </div>
-          <p class="field__hint" id="m-publish-note">Tu nombre y tu mensaje podrán aparecer en la invitación después de que los revisemos.</p>
+          <p class="field__hint" id="m-publish-note">Tu nombre y tu mensaje pueden aparecer en la invitación cuando Dolores y Mauro los aprueben.</p>
           <div class="hp" aria-hidden="true"><label>No completar <input name="website" tabindex="-1" autocomplete="off"></label></div>
           <!-- Sin elección de privacidad: el aviso de arriba informa que se puede publicar y el botón envía publish=on (contrato
                sin cambios). El servidor lo guarda pendiente; solo se publica si Dolores o Mauro lo aprueban. -->
@@ -434,7 +438,7 @@
 
     <figure class="closing">
       <img src="public/img/168-640.webp" srcset="public/img/168-640.webp 640w, public/img/168-1000.webp 1000w, public/img/168-1333.webp 1333w"
-           sizes="(min-width: 768px) min(76rem, 90vw), 100vw" width="640" height="960" loading="lazy" decoding="async"
+           sizes="100vw" width="640" height="960" loading="lazy" decoding="async"
            alt="Dolores tira el sombrero al aire mientras corren de la mano">
       <figcaption class="closing__sig" data-reveal>
         <span class="rule-v" aria-hidden="true"></span>
@@ -458,6 +462,6 @@
     <span class="sr-only">Música de fondo</span>
   </button>
 
-  <script type="module" src="main.js?v=20261108b"></script>
+  <script type="module" src="main.js?v=20261109c"></script>
 </body>
 </html>
